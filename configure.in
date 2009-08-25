@@ -344,6 +344,7 @@ Makefile
 src/Makefile
 marshallers/Makefile
 test/Makefile
+utils/Makefile
 initscript/Makefile
 initscript/RedHat/Makefile
 initscript/RedHat/mbm-gpsd

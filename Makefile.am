@@ -1,4 +1,4 @@
-SUBDIRS = src marshallers initscript			
+SUBDIRS = src marshallers initscript utils
 
 EXTRA_DIST =				\
 	CONTRIBUTING			\
