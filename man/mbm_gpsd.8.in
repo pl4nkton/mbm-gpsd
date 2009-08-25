@@ -1,0 +1,24 @@
+.\" mbm_gpsd(8) manual page
+.\"
+.\" Copyright (C) 2009 Ericsson
+.\"
+.TH MBM_GPSD "8"
+.SH NAME
+mbm_gpsd \- MBM GPS daemon
+.SH SYNOPSIS
+TBD
+.B mbm_gpsd [\-\-no-daemon] [\-\-enable-test-devices]
+.SH DESCRIPTION
+The \fmbm_gpsd\fP daemon attempts to abstract the GPS functionality
+of MBM devices so it behaves as more common GPS devices.
+.SH OPTIONS
+The following options are supported:
+TBD
+.TP
+.I "--no-daemon"
+Do not daemonize.  This is useful for debugging.
+.TP
+.I "--enable-test-devices"
+Enable support for virtual test devices.  These are useful for debugging.
+.SH SEE ALSO
+TBD

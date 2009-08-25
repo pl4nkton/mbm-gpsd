@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/org/mbm/Gps">
+  <interface name="org.mbm.MbmGps">
+    <method name="Enable">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_manager_enable"/>      
+      <arg type="b" name="enable" direction="out" />
+    </method>
+
+	<method name="SetFixInterval">
+      <tp:docstring>
+        Set FixInterval.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_fix_interval"/>      
+      <arg name="interval" type="i" direction="in">
+        <tp:docstring>
+          Current Interval
+        </tp:docstring>
+      </arg>
+    </method>
+
+	<method name="SetSingleShot">
+      <tp:docstring>
+        Set SingleShot.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_single_shot"/>      
+      <arg name="single_shot" type="i" direction="in">
+        <tp:docstring>
+          Current SingleShot
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetPrefGpsMode">
+      <tp:docstring>
+        Set PrefGpsMode.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_pref_gps_mode"/>      
+      <arg name="mode" type="i" direction="in" tp:type="MBM_GPS_MODE">
+        <tp:docstring>
+          Current GPS Mode
+        </tp:docstring>
+      </arg>
+    </method>
+
+    <tp:enum name="MBM_GPS_MODE" type="u">
+      <tp:enumvalue suffix="STAND_ALONE" value="1">
+        <tp:docstring>
+          GPS in stand alone mode.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="PLACEHOLDER" value="2">
+        <tp:docstring>
+          Placeholder for a currently undefined gps mode.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="SUPL" value="3">
+        <tp:docstring>
+          GPS in SUPL mode.
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+    
+   <method name="SetSuplApn">
+      <tp:docstring>
+        Set SuplApn.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_apn"/>      
+      <arg name="apn" type="s" direction="in">
+        <tp:docstring>
+          Current APN
+        </tp:docstring>
+      </arg>
+    </method>
+    
+   <method name="SetSuplAutoConfigureAddress">
+     <tp:docstring>
+       Set SuplAutoConfigureAddress.
+     </tp:docstring>
+     <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_auto_configure_address"/>      
+     <arg name="auto_configure" type="i" direction="in">
+       <tp:docstring>
+         Current auto configure address setting
+       </tp:docstring>
+     </arg>
+   </method>
+
+   <method name="SetSuplAddress">
+      <tp:docstring>
+        Set SuplAddress.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_address"/>      
+      <arg name="address" type="s" direction="in">
+        <tp:docstring>
+          Current address
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetSuplUser">
+      <tp:docstring>
+        Set SuplUser.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_user"/>      
+      <arg name="user" type="s" direction="in">
+        <tp:docstring>
+          Current user
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetSuplPassword">
+      <tp:docstring>
+        Set SuplPassword.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_password"/>      
+      <arg name="password" type="s" direction="in">
+        <tp:docstring>
+          Current password
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetSuplEnableNi">
+      <tp:docstring>
+        Set SuplEnableNi.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_supl_enable_ni"/>      
+      <arg name="password" type="i" direction="in">
+        <tp:docstring>
+          Current Enable ni boolean
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SuplInstallCertificate">
+      <tp:docstring>
+        Install Supl certificate.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_supl_install_certificate"/>      
+      <arg name="certificatefile" type="s" direction="in">
+        <tp:docstring>
+          Path to the certificate
+        </tp:docstring>
+      </arg>
+    </method>
+
+ <method name="GetSuplInstallCertificateStatus">
+      <tp:docstring>
+        Get status of supl certificate installation.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_install_certificate_status"/>      
+      <arg name="status" type="i" direction="out">
+        <tp:docstring>
+          Current installation status.
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetGpsCustomization">
+      <tp:docstring>
+        Get Gps customization.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_gps_customization"/>      
+      <arg name="gps_customized" type="i" direction="out">
+        <tp:docstring>
+          Current Gps customization
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetGpsSuplCustomization">
+      <tp:docstring>
+        Get Gps supl customization.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_gps_supl_customization"/>      
+      <arg name="gps_supl_customized" type="i" direction="out">
+        <tp:docstring>
+          Current Gps supl customization
+        </tp:docstring>
+      </arg>
+    </method>
+
+	<method name="GetFixInterval">
+      <tp:docstring>
+        Get FixInterval.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_fix_interval"/>      
+      <arg name="interval" type="i" direction="out">
+        <tp:docstring>
+          Current Interval
+        </tp:docstring>
+      </arg>
+    </method>
+
+	<method name="GetSingleShot">
+      <tp:docstring>
+        Get SingleShot.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_single_shot"/>      
+      <arg name="interval" type="i" direction="out">
+        <tp:docstring>
+          Current SingleShot
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetPrefGpsMode">
+      <tp:docstring>
+        Get PrefGpsMode.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_pref_gps_mode"/>      
+      <arg name="mode" type="i" direction="out" tp:type="MBM_GPS_MODE">
+        <tp:docstring>
+          Current GPS Mode
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetTimeWithoutFix">
+      <tp:docstring>
+        Get FixInterval.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_time_without_fix"/>      
+      <arg name="interval" type="i" direction="out">
+        <tp:docstring>
+          Current Interval
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuplApn">
+      <tp:docstring>
+        Get SuplApn.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_apn"/>      
+      <arg name="apn" type="s" direction="out">
+        <tp:docstring>
+          Current APN
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuplAutoConfigureAddress">
+     <tp:docstring>
+       Get SuplAutoConfigureAddress.
+     </tp:docstring>
+     <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_auto_configure_address"/>      
+     <arg name="address" type="i" direction="out">
+       <tp:docstring>
+         Current auto configure address setting
+       </tp:docstring>
+     </arg>
+   </method>
+    
+   <method name="GetSuplAddress">
+      <tp:docstring>
+        Get SuplAddress.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_address"/>      
+      <arg name="address" type="s" direction="out">
+        <tp:docstring>
+          Current address
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuplUser">
+      <tp:docstring>
+        Get SuplUser.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_user"/>      
+      <arg name="user" type="s" direction="out">
+        <tp:docstring>
+          Current user
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuplPassword">
+      <tp:docstring>
+        Get SuplPassword.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_password"/>      
+      <arg name="password" type="s" direction="out">
+        <tp:docstring>
+          Current password
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuplEnableNi">
+      <tp:docstring>
+        Get SuplEnableNi.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_supl_enable_ni"/>      
+      <arg name="enabledNi" type="i" direction="out">
+        <tp:docstring>
+          Current Enable ni boolean
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetGpsEnabled">
+      <tp:docstring>
+        Get GPS enabled status.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_gps_enabled"/>      
+      <arg name="enabled" type="i" direction="out">
+        <tp:docstring>
+          Current Enabled boolean
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetGpsEnabled">
+      <tp:docstring>
+        Set GPS enabled status.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_gps_enabled"/>      
+      <arg name="enabled" type="i" direction="in">
+        <tp:docstring>
+          Current Enabled boolean
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method  name="GetEnabledGpsMode">
+      <tp:docstring>
+        Get GPS enabled Mode.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_enabled_gps_mode"/>      
+      <arg name="enabled" type="i" direction="out">
+        <tp:docstring>
+          Current Enabled mode
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetSuspend">
+      <tp:docstring>
+        Set GPS suspend state.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_suspend"/>      
+      <arg name="suspended" type="i" direction="in">
+        <tp:docstring>
+          Current suspend state requested boolean
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="GetSuspend">
+      <tp:docstring>
+        Set GPS suspend state.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_get_suspend"/>      
+      <arg name="suspended" type="i" direction="out">
+        <tp:docstring>
+          Current suspend state boolean
+        </tp:docstring>
+      </arg>
+    </method>
+    
+    
+
+    <signal name="DeviceAdded">
+      <tp:docstring>
+	A device was added to the system.
+      </tp:docstring>
+      <arg name="device" type="o">
+	<tp:docstring>
+	  The object path of the newly added device.
+	</tp:docstring>
+      </arg>
+    </signal>
+
+    <signal name="DeviceRemoved">
+      <tp:docstring>
+	A device was removed from the system, and is no longer available.
+      </tp:docstring>
+      <arg name="device" type="o">
+	<tp:docstring>
+	  The object path of the device that was just removed.
+	</tp:docstring>
+      </arg>
+    </signal>
+
+  </interface>
+</node>

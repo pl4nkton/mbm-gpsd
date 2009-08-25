@@ -1,0 +1,80 @@
+#! /bin/sh 
+#### BEGIN INIT INFO
+# Provides:          mbm_gpsd
+# Required-Start:    $syslog $time $local_fs $network dbus hal
+# Required-Stop:     $syslog $time $local_fs $network dbus hal
+# Default-Start:     2 3 4 5
+# Default-Stop:      S 0 1 6
+# Short-Description: MBM GPS daemon startup/shutdown script.
+# Description:       Debian init script for the MBM to function.
+#                    Currently start/stops a gps daemon.
+### END INIT INFO
+#
+# Author:	Per Hallsmark <per.hallsmark@ericsson.com>
+# 			Torgny Johansson <torgny.johansson@ericsson.com>
+#
+set -e
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="MBM GPS daemon"
+NAME="mbm_gpsd"
+DAEMON=/usr/sbin/$NAME
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+USER=root
+DAEMON_OPTS="-d 1"
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+#
+#	Function that starts the daemon/service.
+#
+d_start() {
+	if [ -e $PIDFILE ]; then
+		log_success_msg "$DESC already started; not starting."
+		return
+	else
+		touch $PIDFILE
+		start-stop-daemon --start --quiet --pidfile $PIDFILE \
+			--user $USER --exec $DAEMON -- $DAEMON_OPTS
+	fi
+}
+
+#
+#	Function that stops the daemon/service.
+#
+d_stop() {
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+		 --oknodo --user $USER --exec $DAEMON
+	rm -f $PIDFILE
+	killall mbm_gpsd
+}
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "$NAME"
+	d_start
+	log_end_msg $?
+    ;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "$NAME"
+	d_stop
+	log_end_msg $?
+    ;;
+  force-reload|restart)
+	log_daemon_msg "Restarting $DESC" "$NAME"
+    d_stop
+    sleep 1
+	d_start
+	log_end_msg $?
+    ;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

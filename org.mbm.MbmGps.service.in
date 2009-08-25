@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.mbm.MbmGps
+Exec=@sbindir@/mbm_gpsd
+User=root

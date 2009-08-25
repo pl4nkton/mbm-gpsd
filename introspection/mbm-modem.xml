@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.mbm.MbmGps.Modem">
+    <method name="Enable">
+      <tp:docstring>
+	Enable the device. Initializes the modem.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_enable"/>
+      <arg name="enable" type="b" direction="in">
+	<tp:docstring>
+	  True to enable the device, False to disable.
+	</tp:docstring>
+      </arg>
+    </method>
+
+    <method name="Connect">
+      <tp:docstring>
+	Dial in.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_connect"/>
+      <arg name="number" type="s" direction="in">
+	<tp:docstring>
+	  The number to use for connecting to GPS.
+      </tp:docstring>
+      </arg>
+    </method>
+
+    <method name="Disconnect">
+      <tp:docstring>
+	Disconnect modem.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_modem_disconnect"/>
+    </method>
+
+    <property name="DataDevice" type="s" access="read">
+      <tp:docstring>
+	The serial device which can be used to read NMEA.
+      </tp:docstring>
+    </property>
+
+    <property name="Driver" type="s" access="read">
+      <tp:docstring>
+        The driver handling the GPS device.
+      </tp:docstring>
+    </property>
+
+
+    
+    
+
+  </interface>
+</node>

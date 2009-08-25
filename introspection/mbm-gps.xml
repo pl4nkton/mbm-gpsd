@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.freedesktop.MbmGps">
+    <tp:docstring>
+      The MbmGps interface is provided by the service which provides connections to MbmGps.
+    </tp:docstring>
+
+    <method name="SetFixInterval">
+      <tp:docstring>
+        Set FixInterval.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_set_fix_interval"/>      
+      <arg name="interval" type="i" direction="in">
+        <tp:docstring>
+          New Interval
+        </tp:docstring>
+      </arg>
+    </method>
+
+   <method name="SetPrefGpsMode">
+      <tp:docstring>
+        Set PrefGpsMode.
+      </tp:docstring>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_set_pref_gps_mode"/>      
+      <arg name="mode" type="i" direction="in" tp:type="MBM_GPS_MODE">
+        <tp:docstring>
+          New GPS Mode
+        </tp:docstring>
+      </arg>
+    </method>
+
+    <tp:enum name="MBM_GPS_MODE" type="u">
+      <tp:enumvalue suffix="STAND_ALONE" value="0">
+        <tp:docstring>
+          GPS in stand alone mode.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="SUPL" value="1">
+        <tp:docstring>
+          GPS in SUPL mode.
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+    
+  </interface>
+</node>

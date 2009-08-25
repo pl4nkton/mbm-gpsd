@@ -1,0 +1,8 @@
+D-Bus interface used by mbm-gpsd
+
+Interface:
+org.freedesktop.MbmGps
+
+Methods:
+org.freedesktop.MbmGps.sleep
+org.freedesktop.MbmGps.wake

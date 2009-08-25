@@ -1,0 +1,23 @@
+<tp:generic-types
+  xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <tp:mapping name="String_Variant_Map">
+    <tp:docstring>A mapping from strings to variants representing extra
+      key-value pairs.</tp:docstring>
+    <tp:member type="s" name="Key"/>
+    <tp:member type="v" name="Value"/>
+  </tp:mapping>
+
+  <tp:mapping name="String_String_Map">
+    <tp:docstring>A mapping from strings to strings representing extra
+      key-value pairs.</tp:docstring>
+    <tp:member type="s" name="Key"/>
+    <tp:member type="s" name="Value"/>
+  </tp:mapping>
+
+  <tp:mapping name="String_String_Variant_Map_Map">
+      <tp:docstring>A mapping from strings to a map of string to variant.</tp:docstring>
+      <tp:member type="s" name="Key"/>
+      <tp:member type="a{sv}" name="Value" tp:type="String_Variant_Map"/>
+  </tp:mapping>
+
+ 

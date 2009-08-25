@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# NetworkManager:   mbm-gpsd daemon
+#
+# chkconfig: - 27 84
+# description:  This is a daemon for MBM GPS 
+#               
+#
+# processname: mbm-gpsd
+# pidfile: /var/run/NetworkManager/mbm-gpsd.pid
+#
+### BEGIN INIT INFO
+# Provides: mbm-gpsd 
+# Required-Start: messagebus haldaemon
+# Required-Stop: messagebus
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop mbm-gpsd
+# Description: mbm-gpsd is a tool to make MBM GPS behave as an ordinary GPS
+### END INIT INFO
+
+prefix=@prefix@
+exec_prefix=@prefix@
+sbindir=@sbindir@
+
+MBM_BIN=${sbindir}/mbm-gpsd
+
+# Sanity checks.
+[ -x $MBM_BIN ] || exit 1
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source network configuration
+. /etc/sysconfig/network
+
+# so we can rearrange this easily
+processname=mbm-gpsd
+servicename=mbm-gpsd
+pidfile=/var/run/mbm-gpsd/mbm-gpsd.pid
+
+RETVAL=0
+
+start()
+{
+	echo -n $"Setting network parameters... "
+	sysctl -e -p /etc/sysctl.conf >/dev/null 2>&1
+	success
+	echo
+
+	echo -n $"Starting mbm-gpsd daemon: "
+	daemon --check $servicename $processname --pid-file=$pidfile
+	RETVAL=$?
+	echo
+	if [ -n "${NETWORKWAIT}" ]; then 
+		[ -z "${LINKDELAY}" ] && LINKDELAY=10
+		echo -n $"Waiting for network..."
+		nm-online -q --timeout=$LINKDELAY || nm-online -q -x --timeout=30
+		[ "$?" = "0" ] && success "network startup" || failure "network startup"
+		echo
+		[ -n "${NETWORKDELAY}" ] && /bin/sleep ${NETWORKDELAY}
+	fi
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$servicename
+}
+
+stop()
+{
+	echo -n $"Stopping mbm-gpsd daemon: "
+	killproc -p $pidfile $servicename
+	RETVAL=$?
+	echo
+	if [ $RETVAL -eq 0 ]; then
+		rm -f /var/lock/subsys/$servicename
+		rm -f $pidfile
+	fi
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	status)
+		status -p $pidfile $processname
+		RETVAL=$?
+		;;
+	restart)
+		stop
+		start
+		;;
+	condrestart)
+		if [ -f /var/lock/subsys/$servicename ]; then
+			stop
+			start
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+		;;
+esac
+exit $RETVAL

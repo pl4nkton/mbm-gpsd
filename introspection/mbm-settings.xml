@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/org/mbm/Gps">
+  <interface name="org.mbm.MbmGps.Settings">
+    <method name="set_fix_interval">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_mbm_set_fix_interval"/>      
+      <arg type="u" name="interval" direction="in" />
+    </method>
+  </interface>
+</node>

@@ -1,0 +1,37 @@
+# get release info
+#   for trunk this is the subversion trunk revision
+#       prefixed with trunk-
+#   for branch this is the subversion branch revision
+#       prefixed with branch-<branch label>
+#   for tags it is the tag label
+svn_repo=https://trac.runaker.com/svn/mbm
+svn_pwd=$(shell svn info . | grep URL | cut -d" " -f2)
+ifeq "$(svn_pwd)" ""
+	parentdir1=$(shell dirname $(PWD))
+	parentdir=$(shell dirname $(parentdir1))
+	base=tags
+	label=$(shell basename $(parentdir))
+	test=$(shell echo "if ran!")
+else
+	svn_offset=$(subst $(svn_repo)/,,$(svn_pwd))
+	base=$(shell echo $(svn_offset) | cut -d/ -f1)
+	label=$(shell echo $(svn_offset) | cut -d/ -f2)
+	test=$(shell echo "else ran!")
+endif
+
+ifeq "$(base)" "trunk"
+	REL=$(APP)-$(base)-$(shell svn info . | grep ^Revision: | cut -d" " -f2)
+else ifeq "$(base)" "branches"
+	REL=$(APP)-$(base)-$(label)-$(shell svn info . | grep ^Revision: | cut -d" " -f2)
+else ifeq "$(base)" "tags"
+	REL=$(label)
+else
+endif
+
+all:
+	echo "#ifndef __VERSION_H__"      >  version.h
+	echo "#define __VERSION_H__"      >> version.h
+	echo "#define VERSION \"$(REL)\"" >> version.h
+	echo "#endif"                     >> version.h
+	echo $(test)
+

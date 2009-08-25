@@ -1,0 +1,234 @@
+;
+;,"1/190 73-HRC 105 034/1,Uen,PB27,1"
+;
+;MCC,3 digit MNC,MNCs,ProfileName,APN,Username,Password,DNS,AutoLoad,APN2,DNS2,Auth Protocol
+454,F,4,3 HK GPRS,web-g.three.com.hk
+232,F,1,A1,A1.net,ppp@A1plus.at,ppp,194.48.124.200,,,194.48.139.254,chap;none
+520,F,01,AIS,internet
+724,F,24,Amazonia,gprs.amazoniacelular.com.br,celular,celular
+748,F,1,Ancel 3G,gprs.ancel
+310,T,150;170;380;410;980;180,AT&T,isp.cingular,wless70,w1rel3ss
+206,F,10,B mobistar,web.pro.be
+250,F,28;99,Beeline,internet.beeline.ru,beeline,beeline
+206,F,1,BEL PROXIMUS,internet.proximus.be
+218,F,90,BH Telekom Bosnia,active.bhmobile.ba
+247,F,5,Bite Latvija,Internet
+246,F,2,Bite Lietuva,banga
+208,F,20,Bouygues,a2bouygtel.com,a2b,acces
+706,F,3,BROADBAND TIGO,broadband.tigo.sv
+704,F,2,BROADBAND TIGO,broadband.tigo.gt
+708,F,2,BROADBAND TIGO,broadband.tigo.hn 
+502,F,19,Celcom Malaysia,celcom3g
+460,F,0,China Mobile,cmnet
+466,F,92,Chung hwa,internet
+310,T,420,Cincinnati Bell Wireless,web.gocbw.com
+730,T,010;100,CL ENTEL PCS,imovil.entelpcs.cl,entelpcs,entelpcs
+730,T,020,CL Movistar Chile,web.tmovil.cl,web,web
+724,F,5,Claro Brazil,claro.com.br,claro,claro
+730,T,030,Claro Chile - Contract,bam.clarochile.cl,clarochile,clarochile
+730,T,030,Claro Chile - Prepaid,bap.clarochile.cl,clarochile,clarochile
+706,F,10,Claro El Salvador,internet.ideasclaro
+704,F,1,Claro Guatemala,internet.ideasclaro
+708,F,1,Claro Honduras,internet.ideasclaro
+716,T,100,Claro Peru,claro.com.br,claro,claro
+732,T,101,COMCEL,Internet.comcel.com.co,COMCELWEB,COMCELWEB
+454,F,0;2;18,CSL,hkcsl
+722,T,310,CTI Argentina GPRS,internet.ctimovil.com.ar,ctigprs,ctigprs999
+744,F,2,CTI Paraguay GPRS,internet.ctimovil.com.py,ctigprs,ctigprs999
+748,F,10,CTI Uruguay GPRS,internet.ctimovil.com.uy,ctiweb,ctiweb999
+455,F,04,CTM,ctm-mobile
+455,F,1,CTM,smartgprs
+280,F,1,Cytamobile-Vodafone - Contract ,internet
+280,F,1,Cytamobile-Vodafone - Corporate,office
+413,F,2,DIALOG - Contract,www.dialogsl.com
+413,F,2,DIALOG - Prepaid,ppinternet
+502,F,16,DiGi,diginet
+603,F,2,Djezzy,djezzy.internet
+232,F,10,Drei AT,drei.at
+520,F,18,DTAC,www.dtac.co.th
+424,F,3,du,du
+214,F,3,E AMENA,internet,CLIENTE,AMENA
+244,F,5,Elisa,internet
+248,F,2,Elisa Estonia,internet,,,194.204.0.1
+262,F,3,E-PLUS,internet.eplus.de,eplus,gprs
+260,F,2,Era,erainternet,erainternet,erainternet
+218,F,3,Eronet Bosnia,gprs.eronet.ba
+424,F,1;2,Etisalat UAE,etisalat.ae
+208,F,10,F SFR,websfr
+466,F,1,Fareastone,internet
+244,F,91,FI SONERA,internet,,,192.89.123.230,,,192.89.123.231
+302,T,370,Fido,internet.fido.ca,fido,fido
+515,F,02,Globe - Postpaid,internet.globe.com.ph
+515,F,02,Globe - Prepaid,http.globe.com.ph
+202,F,1,GR COSMOTE,internet
+216,F,1,H Pannon GSM,net
+454,F,10,HK NEW WORLD,wap
+222,F,1,I TIM,ibox.tim.it
+425,F,2,IL Cellcom,internetg
+510,F,01,Indosat,indosat3g
+440,F,10,JP DoCoMo,mopera.net
+204,F,08,KPN Internet,fastinternet
+270,F,1,LUXGSM,web.pt.lu,,,194.154.192.101,,,194.154.192.102
+502,F,12,MaxisBroadband,maxisbb,maxis,wap
+250,F,2,MegaFon RUS,internet,gdata,gdata
+525,F,03,MobileOne - Contract,sunsurf
+525,F,03,MobileOne - Prepaid,sunsurfmcard
+220,F,3,Mobilna telefonija Srbije RS,gprswap
+420,F,03,Mobily - Contract,WEB1
+420,F,03,Mobily - Prepaid,WEB2
+293,F,41,Mobitel PP,internet,mobitel,internet
+214,F,2;7,Movistar - ES,movistar.es,MOVISTAR,MOVISTAR
+334,T,030,Movistar - MX,internet.movistar.mx,movistar,movistar
+706,F,4,Movistar 2G El Salvador,internet.movistar.sv
+704,F,3,Movistar 2G Guatemala,internet.movistar.gt
+722,T,070,Movistar 3.5G - AR,internet,internet,internet
+748,F,7,Movistar 3.5G - UY,apnumt.movistar.com.uy,movistar,movistar
+426,F,2,MTC-Vodafone BH,internet,internet,internet
+419,F,2,MTC-Vodafone KT,hspps,pps,pps
+284,F,1,M-Tel,inet-gprs.mtel.bg
+655,F,10,MTN SA,internet
+250,F,1,MTS-RUS,mts.internet.ru,mts,mts
+242,F,2,N NetCom GSM,internet.netcom.no
+242,F,1,N Telenor,internet
+230,F,2,o2 - cz,internet
+262,F,7;8,o2 - de,internet
+272,F,2,O2 - IE,open.internet
+231,F,6,O2 - SK,o2internet
+234,F,10,O2 - UK,mobile.o2.co.uk,o2web,password
+724,F,31,Oi,gprs.oi.com.br
+232,F,5;12,one,web.one.at,,,194.24.128.100,,,194.24.128.102
+505,F,2,OPTUS YES,internet
+340,F,1,Orange Caraïbes,orangeweb
+228,F,3,Orange CH Office Access,intranetaccess
+208,F,1,Orange F,orange.fr
+260,F,3,Orange PL,internet,internet,internet
+226,F,10,Orange RO,internet
+231,F,1,Orange SK,internet
+520,F,99,Orange TH,internet,orange,orange
+234,F,33,Orange UK,orangeinternet
+454,F,19,PCCW 3G,pccw
+454,F,16,PCCW GPRS,pccwdata
+454,F,12,PEOPLES,peoples.net
+722,T,340,Personal,gprs.personal.com,gprs,gprs
+260,F,6,PLAY,wap.pl
+260,F,1,PL-PLUS,www.plusgsm.pl
+206,F,1,Proximus,internet.proximus.be
+427,F,1,Qtel,web,qtel
+302,T,720,Rogers Wireless,internet.com,wapuser1,wap
+302,T,720,Rogers Wireless VPN,vpn.com,wapuser1,wap
+208,F,10,SFR - Corporate,internetpro
+208,F,10,SFR - Prepaid,websfr
+525,F,3;4,SGP M1,sunsurf
+293,F,40,SI.MOBIL,,,,121.30.86.130,,,193.189.160.11
+293,F,40,Si.mobil-Vodafone - Corporate,vpn.simobil.si,,,,,,80.95.225.231
+293,F,40,Si.mobil-Vodafone - Prepaid,internet.simobil.si,simobil,internet,80.95.225.230,,,80.95.225.231
+525,F,01,SingTel,internet
+515,F,03,Smart Bro,SMARTBRO,,,,,,,pap
+515,F,03,Smart Gold / Buddy,internet,,,,,,,pap
+455,F,00,SmarTone Macau,smartweb
+454,F,06,SmarTone-Vodafone,Internet
+440,F,20,Softbank,softbank,ai@softbank,softbank
+238,F,02,Sonofon,internet
+525,F,05,StarHub,shinternet
+420,F,1,STC,jawalnet.com.sa
+228,F,2,sunrise,internet
+228,F,1,Swisscom,gprs.swisscom.ch
+228,F,1,Swisscom Mobile,gprs.swisscom.ch
+466,F,97,Taiwan Mobile,internet
+238,F,1,TDC Mobil,internet,,,194.239.134.83,,,193.162.159.194
+238,F,1,TDC Song,internet.no,,,80.232.41.10,,,80.232.41.20
+334,T,020,Telcel GSM,internet.itelcel.com,webgprs,webgprs2002
+204,F,12,Tele2 Breedband,internet.versatel.nl,username,password,62.58.126.130,,,62.58.222.130,chap
+219,F,2,Tele2 Croatia,internet.tele2.hr,,,,,,,pap
+248,F,3,Tele2 Eesti AS,mobileinternet.tele2.ee,wap,wap,,,,,pap
+247,F,2,Tele2 Latvia,mobileinternet.tele2.lv,wap,wap,,,,,pap
+246,F,3,Tele2 Lietuva,mobileinternet.tele2.lt,wap,wap,,,,,pap
+204,F,2,Tele2 Netherlands,internet.tele2.nl,,,,,,,pap
+240,F,7,Tele2 Norway,mobileinternet.tele2.no,,,,,,,none
+240,F,7,Tele2 Sweden,mobileinternet.tele2.se,,,,,,,chap
+228,F,8,Tele2 Switzerland,internet.tele2.ch,,,,,,,pap
+270,F,77,Tele2Tango HSPA,hspa,tango,tango,,,,,chap
+218,F,5,Telekom Srpske Bosnia,mtelgprs1
+220,F,1,Telenor RS,internet
+240,F,8,Telenor Sweden,internet.telenor.se
+204,F,12,Telfort Breedband EDGE,internet
+238,F,20,TELIA DK,www.internet.mtelia.dk
+240,F,1,TELIA S,online.telia.se
+505,F,1,Telstra.Datapack,telstra.datapack,,,,1
+505,F,1,Telstra.Internet,telstra.internet
+505,F,1,Telstra.PCpack,telstra.pcpack
+510,F,89,Three
+505,F,6,Three AU,3netaccess
+234,F,20,Three UK,three.co.uk
+235,F,94,Three UK,three.co.uk
+706,F,3,TIGO El Salvador,internet.tigo.sv
+704,F,2,TIGO Guatemala,internet.tigo.gt
+708,F,2,TIGO Honduras,internet.tigo.hn
+732,T,103;111,TIGO WEB,web.colombiamovil.com.co
+724,F,2;3;4,TIM BRASIL,tim.br,tim,tim
+716,T,100,TIM PERU,tim.pe
+268,F,6,TMN,internet,,,194.65.3.20,,,194.65.3.21
+232,F,3,T-Mobile A,gprsinternet
+230,F,1,T-Mobile CZ,internet.t-mobile.cz,,,62.141.0.1,,,62.141.0.2
+262,F,1,T-Mobile D,internet.t-mobile,free,free
+216,F,30,T-Mobile H,internet
+219,F,1,T-Mobile HR,web.htgprs,,,10.12.0.1
+204,F,16,T-Mobile NL,internet
+234,F,30;31;32,T-Mobile UK,general.t-mobile.uk
+310,T,160;200;210;220;230;240;250;260;270;300;310;580;660;800,T-Mobile US,internet2.voicestream.com,,,,,internet3.voicestream.com
+286,F,3,TR ARIA,internet,internet,,212.156.4.1,,,212.156.4.4
+286,F,4,TR AYCELL,aycell
+286,F,2,TR TELSIM,telsim
+286,F,1,TR TURKCELL,internet
+238,F,6,Tre DK, data.tre.dk 
+222,F,99,Tre IT,tre.it
+240,F,2,Tre SE,data.tre.se
+510,F,10,TselFlash - Time Based,flash,flash,flash,,,,,chap
+510,F,10,TselFlash - Unlimited/Volume Based,internet,internet,internet,,,,,chap
+255,F,7,Utel INET,3g.utel.ua
+419,F,3,Wataniya,action.wataniya.com
+466,F,89,VIBO Telecom,vibo
+222,F,88,WIND,internet.wind,,,212.245.255.2,,,0.0.0.0
+222,F,88,WIND Aziende,internet.wind.biz,,,212.245.255.2,,,212.141.84.12
+219,F,10,VIP Croatia,data.vip.hr,38591,38591
+220,F,5,Vip Mobile RS,vipmobile,vipmobile,vipmobile
+219,F,10,Vipnet,data.vip.hr
+724,F,6;10;11;23,Vivo Zap,zap.vivo.com.br,vivo,vivo,,,,,pap
+655,F,1,Vodacom,internet
+276,F,2,Vodafone Albania,vodafoneweb
+230,F,3,Vodafone CZ,dataplus.vodafone.cz
+262,F,2,Vodafone DE - WebSession,event.vodafone.de,,,139.7.25.221,,,139.7.25.222
+262,F,2,Vodafone DE - Vertrag,web.vodafone.de,,,139.7.30.125,,,139.7.30.126
+602,F,2,Vodafone Egypt - Contract,internet.vodafone.net,internet,internet,163.121.128.134,,,212.103.160.18
+602,F,2,Vodafone Egypt - Corporate,mylan.vodafone.net,mylan,mylan,163.121.128.134,,,212.103.160.18
+542,F,1,Vodafone Fiji,vfinternet.fj
+202,F,5,Vodafone Greece - Contract,internet
+202,F,5,Vodafone Greece - Corporate,office
+202,F,5,Vodafone Greece - Prepaid,vmckarta
+216,F,70,Vodafone Hungary - Contract,internet.vodafone.net
+216,F,70,Vodafone Hungary - Prepaid,vitamax.internet.vodafone.net
+274,F,2,Vodafone Iceland,vmc.gprs.is
+272,F,1,Vodafone IE,hs.vodafone.ie,vodafone,vodafone
+404,F,67;66;88;86;84;60;46;43;30;27;20;15;13;11;5;1,Vodafone India - Contract,hutchvpn.hutch.co.in
+404,F,67;66;88;86;84;60;46;43;30;27;20;15;13;11;5;1,Vodafone India - Prepaid,www
+505,F,03,Vodafone Internet,vfinternet.au,internet,internet
+222,F,10,vodafone IT - Contract,web.omnitel.it
+222,F,10,vodafone IT - Corporate,mylan.omnitel.it
+278,F,1,Vodafone Malta,internet,internet,internet,80.85.96.131,,,80.85.97.70
+204,F,4,Vodafone NL - Contract,office.vodafone.nl,vodafone,vodafone
+204,F,4,Vodafone NL - Prepaid,office.vodafone.nl
+530,F,1,Vodafone NZ,www.vodafone.net.nz
+268,F,1,vodafone P - Contract,internet.vodafone.pt,vodafone,vodafone
+268,F,1,vodafone P - Corporate,corporate.vodafone.pt
+226,F,1,Vodafone RO,internet.vodafone.ro,internet.vodafone.ro,vodafone
+214,F,1,Vodafone Spain,ac.vodafone.es,vodafone,vodafone,212.73.32.3,,,212.73.32.67
+286,F,2,Vodafone TR,internet,vodafone,vodafone
+234,F,15,Vodafone UK - Contract,internet,web,web
+234,F,15,Vodafone UK - Corporate,mylan
+234,F,15,Vodafone UK - Prepaid,pp.internet,web,web
+510,F,11,XL-Indonesia,www.xlgprs.net,xlgprs,proxl
+419,F,2,Zain Kuwait,HSPPS,HSPPS,HSPPS
+420,F,4,Zain Saudi Arabia,zain-WAP
+
+455,F,03,3 Macau,mobile.three.com.mo
+454,F,03,3 HK,ipc.three.com.hk

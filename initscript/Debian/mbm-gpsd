@@ -1,0 +1,79 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          mbm-gpsd
+# Required-Start:    $all dbus hal
+# Required-Stop:     $all dbus hal
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: MBM GPS daemon
+# Description:       Daemon for MBM GPS to abstract away differences from
+#                    ordinary NMEA GPS device.
+### END INIT INFO
+#
+# Authors:	Bjorn Runaker <bjorn.runaker@ericsson.com>
+#           Torgny Johansson <torgny.johansson@ericsson.com>
+#
+#
+
+set -e
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="MBM GPS daemon"
+NAME=mbm-gpsd
+DAEMON=/usr/sbin/$NAME
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+USER=root
+DAEMON_OPTS=""
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+#
+#	Function that starts the daemon/service.
+#
+d_start() {
+	start-stop-daemon --start --background --quiet --make-pid --pidfile $PIDFILE \
+		--user $USER --exec $DAEMON -- $DAEMON_OPTS
+}
+
+#
+#	Function that stops the daemon/service.
+#
+d_stop() {
+	start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+		 --oknodo --user $USER --exec $DAEMON
+}
+
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "$NAME"
+	d_start
+	log_end_msg $?
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "$NAME"
+	d_stop
+	log_end_msg $?
+	;;
+  restart|force-reload)
+	log_daemon_msg "Restarting $DESC" "$NAME"
+	d_stop
+	sleep 1
+	d_start
+	log_end_msg $?
+	;;
+  status)
+	status_of_proc -p $PIDFILE $DAEMON $NAME && exit 0 || exit $?
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|force-reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
+

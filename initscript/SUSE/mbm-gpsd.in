@@ -1,0 +1,51 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:       mbm-gpsd
+# Required-Start: dbus haldaemon
+# Default-Start:  3 5
+# Default-Stop:
+# Description: mbm-gpsd, a network and wireless connection manager
+### END INIT INFO
+
+sbindir=@sbindir@
+
+mbm-gpsd_BIN=${sbindir}/mbm-gpsd
+test -x $mbm-gpsd_BIN || exit 5
+
+. /etc/rc.status
+rc_reset
+
+case "$1" in
+	start)
+		checkproc $mbm-gpsd_BIN
+		if [ $? = 0 ]; then
+			echo -n "mbm-gpsd already running"
+			rc_status -v
+			rc_exit
+		fi
+		echo -n "Starting the mbm-gpsd"
+		startproc $mbm-gpsd_BIN
+		rc_status -v
+		;;
+	stop)
+		echo -n "Shutting down the mbm-gpsd"
+		killproc -TERM $mbm-gpsd_BIN
+		rc_status -v
+		;;
+	restart)
+		$0 stop
+		$0 start
+		rc_status
+		;;
+	status)
+		echo -n "Checking for the mbm-gpsd: "
+		checkproc $mbm-gpsd_BIN
+		rc_status -v
+		;;
+	*)
+		echo "Usage: $0 {start|stop|status|restart}"
+		exit 1
+		;;
+esac
+
