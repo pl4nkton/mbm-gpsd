@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Copyright (C) 2009  Ericsson AB
+#	Author: Bjorn Runaker <bjorn.runaker@ericsson.com>
+#           Torgny Johansson <torgny.johansson@ericsson.com>
+
+test -f /etc/mbm.conf || exit 1
+. /etc/mbm.conf
+EMPTY_TTY=/usr/bin/empty_tty
+
+$EMPTY_TTY -s -o $CONTROL_DEV -i $CONTROL_DEV "AT*E2RESET\r"

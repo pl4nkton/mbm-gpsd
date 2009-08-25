@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Copyright (C) 2009  Ericsson AB
+#	Author: Bjorn Runaker <bjorn.runaker@ericsson.com>
+#           Torgny Johansson <torgny.johansson@ericsson.com>
+
+test -f /etc/mbm.conf || exit 1
+. /etc/mbm.conf
+EMPTY_TTY=/usr/bin/empty_tty
+MBM_AUTOSUSPEND=/usr/bin/mbm_autosuspend
+
+if [ "$CONTROL_DEV" ]
+then
+case $1 in
+    hibernate)
+	mbm_powerstate 0
+        ;;
+    suspend)
+	mbm_powerstate 0
+       ;;
+    thaw)
+	# resume from hibernate
+	mbm_powerstate 1
+        ;;    
+    resume)
+	# resume from suspend from RAM
+	mbm_powerstate 1
+        ;;
+    *)  echo $1 
+        ;;
+esac
+fi

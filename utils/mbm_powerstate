@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Copyright (C) 2009  Ericsson AB
+#	Author: Bjorn Runaker <bjorn.runaker@ericsson.com>
+
+test -f /etc/mbm.conf || exit 1
+. /etc/mbm.conf
+
+sleep="0"
+
+echo "PIN = $PIN   PUK = $PUK"
+
+if [ $1 == "1" ]
+then
+	let sleep="0"
+else
+	let sleep="1"
+fi
+command="dbus-send --system --print-reply=literal --dest=org.mbm.MbmGps /org/mbm/Gps org.mbm.MbmGps.SetSuspend int32:$sleep"
+$command
+exit 0
