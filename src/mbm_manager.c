@@ -562,7 +562,7 @@ gint main_loop (gpointer data)
 		if (mbm_options_debug () > 2)
 			g_debug ("MAIN: Waiting for select to return.\n");
 		priv->timeout.tv_sec = 0;
-		priv->timeout.tv_nsec = 10000000;
+		priv->timeout.tv_nsec = 100000000;
 		select_res = pselect (priv->maxfd, &priv->fdsreaduse, NULL, NULL,
 							  &priv->timeout, &priv->sigmask);
 		if (select_res == -1) {
