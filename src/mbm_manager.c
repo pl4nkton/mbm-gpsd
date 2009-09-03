@@ -169,6 +169,14 @@ static void init_mbm_modem (MBMManager * manager)
 	modem_check_radio (manager);
 	modem_enable_unsolicited_responses (manager);
 	modem_check_gps_customization (manager);
+
+    if (!mbm_gps_customization (STAND_ALONE_MODE)) {
+        g_debug ("The module does have GPS functionality. Exiting.");
+        save_settings ();
+        mbm_manager_quit (manager);
+        exit (0);
+    }
+    
 	modem_open_gps_nmea (manager);
 
 	priv->gps_port_not_defined = 1;
