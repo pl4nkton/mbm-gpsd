@@ -253,7 +253,7 @@ int setup_supl (MBMManager * manager)
 		if (mbm_options_debug ())
 			g_debug ("Supl apn is not set. Unable to setup supl.\n");
 	}
-	
+
 /* check if the account has been setup but we failed later
  * if so we need to remove the account again
  */

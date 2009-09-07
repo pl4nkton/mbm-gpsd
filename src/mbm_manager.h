@@ -129,6 +129,7 @@ typedef struct {
 	gchar *ctrl_udi;
 	gchar *driver;
 	gint connected;
+    int registration_status;
 
 	void *modem;
 

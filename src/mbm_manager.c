@@ -166,8 +166,8 @@ static void init_mbm_modem (MBMManager * manager)
 	}
 
 	modem_check_pin (manager);
+    modem_enable_unsolicited_responses (manager);
 	modem_check_radio (manager);
-	modem_enable_unsolicited_responses (manager);
 	modem_check_gps_customization (manager);
 
     if (!mbm_gps_customization (STAND_ALONE_MODE)) {
@@ -488,6 +488,7 @@ static void pm_prepare_for_sleep (MBMManager * manager)
 
 	remove_supl_setup (manager);
 	modem_disable_unsolicited_responses (manager);
+    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 	modem_disable_gps (manager);
 	tcflush (priv->nmea_fd, TCIOFLUSH);
 	tcflush (priv->ctrl_fd, TCIOFLUSH);
@@ -744,6 +745,7 @@ void cleanup_func (MBMManager * manager)
 
 	remove_supl_setup (manager);
 	modem_disable_unsolicited_responses (manager);
+    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 	modem_disable_gps (manager);
 	tcflush (priv->nmea_fd, TCIOFLUSH);
 	tcflush (priv->ctrl_fd, TCIOFLUSH);
@@ -821,6 +823,7 @@ void _mbm_manager_init (MBMManager * manager)
 
 	priv->wait_for_sleep = 0;
 	priv->unsolicited_responses_enabled = 0;
+    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 
 	priv->supl_setup_done = 0;
 	priv->supl_account_idx = -1;

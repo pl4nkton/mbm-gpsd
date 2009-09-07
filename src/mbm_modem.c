@@ -168,6 +168,39 @@ void modem_check_pin (MBMManager * manager)
 	free (response);
 }
 
+static void modem_check_registration_status (MBMManager *manager)
+{
+    char *response;
+    char buf[15];
+    int len;
+    MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
+    
+    if (mbm_options_debug ())
+        g_debug ("Checking registration status");
+
+    len = sprintf (buf, "AT+CREG?\r\n");
+    response = serial_send_AT_cmd (manager, buf, len);
+
+    if (response) {
+        if (strstr (response, "+CREG: 1,1"))
+            priv->registration_status = MBM_REGISTRATION_STATUS_HOME_NETWORK;
+        if (strstr (response, "+CREG: 1,2"))
+            priv->registration_status = MBM_REGISTRATION_STATUS_SEARCHING;
+        if (strstr (response, "+CREG: 1,3"))
+            priv->registration_status = MBM_REGISTRATION_STATUS_DENIED;
+        if (strstr (response, "+CREG: 1,4"))
+            priv->registration_status = MBM_REGISTRATION_STATUS_UNKNOWN;
+        if (strstr (response, "+CREG: 1,5"))
+            priv->registration_status = MBM_REGISTRATION_STATUS_ROAMING;
+        if (mbm_options_debug ())
+            g_debug ("Registration status: %d", priv->registration_status);
+        free (response);
+    } else {
+        if (mbm_options_debug ())
+            g_debug ("Unable to check registration status.");
+    }
+}
+
 void modem_check_radio (MBMManager * manager)
 {
 	char *response;
@@ -184,6 +217,7 @@ void modem_check_radio (MBMManager * manager)
 		if (strstr (response, "+CFUN: 1") || strstr (response, "+CFUN: 5")) {
 			if (mbm_options_debug ())
 				g_debug ("Radio is already on.");
+            modem_check_registration_status (manager);
 		} else {
 			if (mbm_options_debug ())
 				g_debug ("Radio is off, trying to turn it on.");
@@ -336,6 +370,20 @@ void modem_enable_unsolicited_responses (MBMManager * manager)
 	}
 	free (response);
 
+    len = sprintf (buf, "AT+CREG=1\r\n");
+	response = serial_send_AT_cmd (manager, buf, len);
+	if (response == NULL)
+		modem_error_device_stalled (manager);
+    
+	for (i = 0; strstr (response, "ERROR") && i < 5; i++) {
+		if (mbm_options_debug ())
+			g_debug ("Error enabling CREG, trying again.\n");
+		sleep (2);
+        free (response);
+		response = serial_send_AT_cmd (manager, buf, len);
+	}
+	free (response);
+
 	priv->unsolicited_responses_enabled = 1;
 }
 
@@ -359,6 +407,10 @@ void modem_disable_unsolicited_responses (MBMManager * manager)
 	free (response);
 
 	len = sprintf (buf, "AT*E2CFUN=0\r\n");
+	response = serial_send_AT_cmd (manager, buf, len);
+	free (response);
+
+    len = sprintf (buf, "AT+CREG=0\r\n");
 	response = serial_send_AT_cmd (manager, buf, len);
 	free (response);
 
@@ -407,7 +459,7 @@ modem_enable_gps (MBMManager * manager, unsigned int mode,
     priv->gps_start_time = mktime (localtime (&rawtime));
 
 	if (mode == SUPL_MODE) {
-		if (setup_supl (manager)) {
+        if (setup_supl (manager)) {
 			if (mbm_options_debug ())
 				g_debug ("Trying to enable GPS with SUPL.\n");
 			len = sprintf (buf, "AT*E2GPSCTL=%d,%d\r\n", mode, interval);
@@ -783,6 +835,22 @@ static void parse_e2certun (MBMManager *manager, char *buf)
 	}
 }
 
+static void parse_creg (MBMManager *manager, char *buf)
+{
+    char *str;
+    int status;
+    MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
+    
+    str = strstr (buf, UR_CREG);
+
+    if (str) {
+        status = str[7] - '0';
+        if (mbm_options_debug ())
+            g_debug ("CREG unsolicited response received, status: %d", status);
+        priv->registration_status = status;
+    }
+}
+
 void modem_parse_gps_ctrl (MBMManager * manager, char *buf, int len)
 {
 	if (mbm_options_debug () > 1)
@@ -797,6 +865,8 @@ void modem_parse_gps_ctrl (MBMManager * manager, char *buf, int len)
     parse_e2gpssuplni (manager, buf);
 
     parse_e2certun (manager, buf);
+
+    parse_creg (manager, buf);
 }
 
 void modem_check_and_handle_gps_states (MBMManager * manager)
@@ -806,6 +876,7 @@ void modem_check_and_handle_gps_states (MBMManager * manager)
 	int gps_mode = mbm_nmea_mode ();
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 	int interval;
+    int waiting_for_registration = 0;
 
 	/* check if we should install a supl certificate */
 	if (priv->install_supl_cert) {
@@ -886,13 +957,37 @@ void modem_check_and_handle_gps_states (MBMManager * manager)
 				 priv->new_gps_state.gps_enabled_mode);
 	}
 
+    if (gps_mode == SUPL_MODE) {
+        switch (priv->registration_status) {
+        case MBM_REGISTRATION_STATUS_HOME_NETWORK:
+        case MBM_REGISTRATION_STATUS_ROAMING:
+        case MBM_REGISTRATION_STATUS_DENIED:
+            if (priv->current_gps_state.gps_enabled_mode == SUPL_WAITING_FOR_REGISTRATION)
+                enable_gps_set = 1;
+            
+            waiting_for_registration = 0;
+            break;
+        case MBM_REGISTRATION_STATUS_NOT_REGISTERED:
+        case MBM_REGISTRATION_STATUS_SEARCHING:
+        case MBM_REGISTRATION_STATUS_UNKNOWN:
+            if (mbm_options_debug () > 1)
+                g_debug ("Waiting for network registration");
+            waiting_for_registration = 1;
+            priv->gps_enabled = SUPL_WAITING_FOR_REGISTRATION;
+            priv->new_gps_state.gps_enabled_mode = SUPL_WAITING_FOR_REGISTRATION;
+            break;
+        default:
+            break;
+        }
+    }
+    
 	priv->current_gps_state = priv->new_gps_state;
 
 	/* finally enable/disable the gps */
 	if (priv->client_connections && !disable_gps_set
 		&& !priv->current_gps_state.w_disable) {
 		if (priv->current_gps_state.gps_enabled_mode) {
-			if (enable_gps_set) {
+			if (enable_gps_set && !waiting_for_registration) {
 				if (mbm_options_debug ())
 					g_debug
 						("Enabling gps (enable_gps_set) with mode: %d, interval: %d.\n",
@@ -900,11 +995,13 @@ void modem_check_and_handle_gps_states (MBMManager * manager)
 				modem_enable_gps (manager, gps_mode, interval);
 			}
 		} else {
-			if (mbm_options_debug ())
-				g_debug
-					("Enabling gps (client_connections) with mode: %d, interval: %d.\n",
-					 gps_mode, interval);
-			modem_enable_gps (manager, gps_mode, interval);
+            if (!waiting_for_registration) {
+                if (mbm_options_debug ())
+                    g_debug
+                        ("Enabling gps (client_connections) with mode: %d, interval: %d.\n",
+                         gps_mode, interval);
+                modem_enable_gps (manager, gps_mode, interval);
+            }
 		}
 	} else {
 		if (priv->current_gps_state.gps_enabled_mode) {

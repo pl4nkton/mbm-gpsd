@@ -26,13 +26,20 @@
 #define UR_E2CFUN       "*E2CFUN:"
 #define UR_E2GPSSUPLNI  "*E2GPSSUPLNI:"
 #define UR_E2CERTUN     "*E2CERTUN:"
-#define UR_CREG         "+CREG: "
+#define UR_CREG         "+CREG:"
 #define UR_ERINFO        "*ERINFO: "
 
 #define AT_CIMI     "AT+CIMI"
 #define AT_CGSN     "AT+CGSN"
 #define AT_ERINFO   "AT*ERINFO?"
 #define AT_CREG     "AT+CREG?"
+
+#define MBM_REGISTRATION_STATUS_NOT_REGISTERED 0
+#define MBM_REGISTRATION_STATUS_HOME_NETWORK 1
+#define MBM_REGISTRATION_STATUS_SEARCHING 2
+#define MBM_REGISTRATION_STATUS_DENIED 3
+#define MBM_REGISTRATION_STATUS_UNKNOWN 4
+#define MBM_REGISTRATION_STATUS_ROAMING 5
 
 void modem_error_device_stalled (MBMManager * manager);
 
