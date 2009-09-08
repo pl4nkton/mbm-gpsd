@@ -58,7 +58,6 @@ char *serial_send_AT_cmd (MBMManager * manager, char *buf, int len)
 	pthread_mutex_lock (&nmea_mutex);
 
 	response = malloc (MAX_RESPONSE);
-	g_debug ("MAX_RESPONSE: %d", MAX_RESPONSE);
 	response[0] = 0;
 
 	/* send command */
@@ -84,7 +83,6 @@ char *serial_send_AT_cmd (MBMManager * manager, char *buf, int len)
 	fds[0].events = POLLIN;
 	while (1) {
 		status = poll (fds, 1, 5000);	/* wait up to 5 seconds */
-		g_debug ("status=%d", status);
 		if (!status) {
             if (len > 0) {
                 pthread_mutex_unlock (&nmea_mutex);

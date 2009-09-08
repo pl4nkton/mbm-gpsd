@@ -120,10 +120,18 @@ static MBMManager *g_manager;
 
 void sig_quit (int sig)
 {
-	g_debug ("sig_quit %d", sig);
-	save_settings ();
-	mbm_manager_quit (g_manager);
-	g_main_loop_quit (g_loop);
+    MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (g_manager);
+    if (!priv->system_terminating) {
+        if (mbm_options_debug ())
+            g_debug ("Shutting down.");
+        priv->system_terminating = 1;
+        save_settings ();
+        mbm_manager_quit (g_manager);
+        g_main_loop_quit (g_loop);
+    } else {
+        if (mbm_options_debug ())
+            g_debug ("The system is already shutting down. Please wait.");
+    }
 }
 
 int main (int argc, char *argv[])

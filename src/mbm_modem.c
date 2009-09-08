@@ -856,8 +856,6 @@ void modem_parse_gps_ctrl (MBMManager * manager, char *buf, int len)
 	if (mbm_options_debug () > 1)
 		g_debug ("%s: <-- %d, \"%s\"", __FUNCTION__, len, buf);
 
-	g_debug ("PARSE_GPS_CTRL: %s", buf);
-
     parse_e2gpsstat (manager, buf);
 
     parse_e2cfun (manager, buf);

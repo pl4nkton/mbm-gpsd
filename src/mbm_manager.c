@@ -187,8 +187,6 @@ static void *create_mbm_modem (MBMManager * manager, const char *udi)
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 	char *ctrl_udi, *nmea_udi;
 
-	g_debug ("create_mbm_modem");
-
 	/* set the ports */
 	priv->nmea_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
 									   gps_nmea_capability, &nmea_udi);
@@ -225,14 +223,15 @@ void
 impl_mbm_manager_enable (MBMManager * manager, gboolean enable,
 						 DBusGMethodInvocation * context)
 {
-	g_debug ("impl_manager_enable");
 	dbus_g_method_return (context);
 }
 
 static void device_added (LibHalContext * ctx, const char *udi)
 {
-	g_debug ("device_added udi=%s", udi);
-	g_debug ("Won't handle it...");
+    if (mbm_options_debug ()) {
+        g_debug ("device_added udi=%s", udi);
+        g_debug ("Won't handle it...");
+    }
 }
 
 static void device_removed (LibHalContext * ctx, const char *udi)
@@ -252,7 +251,8 @@ static void
 device_new_capability (LibHalContext * ctx, const char *udi,
 					   const char *capability)
 {
-	g_debug ("device_new_capability");
+    if (mbm_options_debug ())
+        g_debug ("device_new_capability");
 	device_added (ctx, udi);
 }
 
@@ -263,8 +263,6 @@ static void create_initial_modems (MBMManager * manager)
 	int num_devices;
 	int i;
 	DBusError err;
-
-	g_debug ("create_initial_modems");
 
 	dbus_error_init (&err);
 	devices = libhal_find_device_by_capability ((LibHalContext *) priv->hal_ctx,
@@ -543,7 +541,6 @@ gint main_loop (gpointer data)
 	while (1) {
 		/* Going down? Uninstall idle task if so */
 		if (priv->system_terminating) {
-			g_debug ("terminating idle proc");
 			g_thread_exit (NULL);
 			return FALSE;
 		}
@@ -741,8 +738,6 @@ void cleanup_func (MBMManager * manager)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 
-	g_debug ("cleanup func");
-
 	remove_supl_setup (manager);
 	modem_disable_unsolicited_responses (manager);
     priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
@@ -760,10 +755,7 @@ void cleanup_func (MBMManager * manager)
  */
 void mbm_manager_quit (MBMManager * manager)
 {
-	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 	int i = 0;
-	g_debug ("mbm_manager_quit");
-	priv->system_terminating = 1;
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		client_remove (manager, i);
@@ -777,8 +769,6 @@ void _mbm_manager_init (MBMManager * manager)
 	GError *err = NULL;
 	DBusError dbus_error;
 	int i;
-
-	g_debug ("mbm_manager_init");
 
 	priv->modem = NULL;
 
@@ -849,15 +839,9 @@ void _mbm_manager_init (MBMManager * manager)
 
 static void mbm_manager_init (MBMManager * manager)
 {
-
-	g_debug ("mbm_manager_init");
-
 	_mbm_manager_init (manager);
 
 	g_thread_create ((GThreadFunc) main_loop, manager, TRUE, NULL);
-
-	g_debug ("mbm_manager_init done");
-
 }
 
 void _finalize (MBMManagerPrivate * priv)
@@ -886,8 +870,6 @@ static void finalize (GObject * object)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (object);
 
-	g_debug ("finalize");
-
 	_finalize (priv);
 
 	G_OBJECT_CLASS (mbm_manager_parent_class)->finalize (object);
@@ -896,8 +878,6 @@ static void finalize (GObject * object)
 static void mbm_manager_class_init (MBMManagerClass * manager_class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (manager_class);
-
-	g_debug ("mbm_manager_class_init");
 
 	g_type_class_add_private (object_class, sizeof (MBMManagerPrivate));
 
