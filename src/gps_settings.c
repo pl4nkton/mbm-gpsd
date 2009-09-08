@@ -300,10 +300,14 @@ void load_settings ()
 			if (mbm_options_debug ())
 				g_debug ("Unable to open fallback config file.\n");
 			return;
-		} else
-			g_debug ("Reading config from %s", MBM_SETTING_FPATH_FALLBACK);
-	} else
-		g_debug ("Reading config from %s", MBM_SETTING_FPATH);
+		} else {
+			if (mbm_options_debug ())
+				g_debug ("Reading config from %s", MBM_SETTING_FPATH_FALLBACK);
+		}
+	} else {
+		if (mbm_options_debug ())
+			g_debug ("Reading config from %s", MBM_SETTING_FPATH);
+	}
 
 	read_settings (fd);
 	fclose (fd);
@@ -455,8 +459,10 @@ void save_settings ()
 		} else
 			g_debug ("Saving config to %s", MBM_SETTING_FPATH_FALLBACK);
 		return;
-	} else
-		g_debug ("Saving config to %s", MBM_SETTING_FPATH);
+	} else {
+		if (mbm_options_debug ())
+			g_debug ("Saving config to %s", MBM_SETTING_FPATH);
+	}
 	if (write_settings (fd)) {
 		if (mbm_options_debug ())
 			g_debug ("Settings saved succesfully.\n");
