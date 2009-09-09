@@ -83,7 +83,7 @@ EXTRA_DIST = \
 rundir=$(localstatedir)/run/MBM
 install-data-hook:
 	$(mkinstalldirs) -m 0700 $(DESTDIR)$(rundir)
-	chmod 600 $(sysconfdir)/$(dist_sysconf_DATA)
+	chmod 600 $(DESTDIR)/$(sysconfdir)/$(dist_sysconf_DATA)
 
 CLEANFILES = $(BUILT_SOURCES)
 
