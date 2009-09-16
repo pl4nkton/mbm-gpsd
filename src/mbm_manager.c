@@ -604,13 +604,13 @@ gint main_loop (gpointer data)
 				g_debug ("MAIN: FD_ISSET was set on ifd\n");
 			memset (buf, 0, sizeof (buf));
 			len = read (priv->ifd, buf, sizeof (buf));
-			if (mbm_options_debug ())
+			if (mbm_options_debug () > 1)
 				g_debug ("notifier: <-- %d", len);
 			i = 0;
 			while (i < len) {
 				ievent = (struct inotify_event *)&buf[i];
 				if (ievent->mask & IN_OPEN) {
-					if (mbm_options_debug ())
+					if (mbm_options_debug () > 1)
 						g_debug ("notifier: port %d opened", ievent->wd);
 					/* only enable gps when first client attach */
 					if (!priv->client_connections) {
@@ -633,10 +633,10 @@ gint main_loop (gpointer data)
 															   &
 															   IN_CLOSE_NOWRITE))
 				{
-					if (mbm_options_debug ())
+					if (mbm_options_debug () > 1)
 						g_debug ("notifier: port %d closed", ievent->wd);
 				}
-				if (mbm_options_debug ())
+				if (mbm_options_debug () > 1)
 					g_debug ("notifier: name %s\n", ievent->name);
 				/* check for more events */
 				i += sizeof (struct inotify_event) + ievent->len;
