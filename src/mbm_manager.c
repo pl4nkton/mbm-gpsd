@@ -274,6 +274,12 @@ static void create_initial_modems (MBMManager * manager)
 		dbus_error_free (&err);
 	}
 
+    if (num_devices == 0) {
+        g_warning ("No GPS devices found. Exiting.");
+        mbm_manager_quit (manager);
+        exit (0);
+    }
+
 	if (devices) {
 		for (i = 0; i < num_devices; i++) {
 			char *udi = devices[i];
