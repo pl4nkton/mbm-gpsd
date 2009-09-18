@@ -116,6 +116,26 @@ int modem_check_AT_cmd (char *at_cmd)
 	}
 }
 
+static gboolean modem_is_pin_ready (MBMManager *manager)
+{
+    char *response;
+    char buf[40];
+    int len;
+    gboolean ready = FALSE;
+
+    if (mbm_options_debug ())
+        g_debug ("Checking if the sim card is pin locked");
+
+    len = sprintf (buf, "AT+CPIN?\r\n");
+	response = serial_send_AT_cmd (manager, buf, len);
+
+    if (response && strstr (response, "READY"))
+        ready = TRUE;
+
+    free (response);
+    return ready;
+}
+
 void modem_check_pin (MBMManager * manager)
 {
 	char *response;
@@ -133,10 +153,16 @@ void modem_check_pin (MBMManager * manager)
 		if (mbm_options_debug ())
 			g_debug ("Sim card is pin locked.");
 
-		/* try to unlock once but don't care if it works or not */
-		len = sprintf (buf, "AT+CPIN=\"%s\"\r\n", mbm_pin_code ());
-		response = serial_send_AT_cmd (manager, buf, len);
-		usleep (500);
+		/* if we have a pin code, try to unlock once but don't care if it works or not */
+        if (strlen (mbm_pin_code ()) >= 4) {
+            len = sprintf (buf, "AT+CPIN=\"%s\"\r\n", mbm_pin_code ());
+            response = serial_send_AT_cmd (manager, buf, len);
+            usleep (500);
+            free (response);
+        } else {
+            if (mbm_options_debug ())
+                g_debug ("Couldn't unlock sim card since no PIN code has been provided");
+        }
 
 	} else if (response && strstr (response, "SIM PUK")) {
 		free (response);
@@ -149,23 +175,26 @@ void modem_check_pin (MBMManager * manager)
 					 mbm_pin_code ());
 		response = serial_send_AT_cmd (manager, buf, len);
 		usleep (500);
+        free (response);
 
 	} else if (response && strstr (response, "READY")) {
 		if (mbm_options_debug ())
 			g_debug ("Sim card is not locked.");
+        free (response);
     } else if (response && strstr (response, "ERROR")) {
         if (mbm_options_debug())
             g_debug ("Got an error. Probably no SIM inserted.");
+        free (response);
 	} else if (response == NULL) {
+        free (response);
 		modem_error_device_stalled (manager);
 	} else {
 		if (mbm_options_debug ()) {
 			g_debug ("Sim card is in unknown state.");
             g_debug ("State: %s", response);
         }
+        free (response);
 	}
-
-	free (response);
 }
 
 static void modem_check_registration_status (MBMManager *manager)
@@ -370,19 +399,23 @@ void modem_enable_unsolicited_responses (MBMManager * manager)
 	}
 	free (response);
 
-    len = sprintf (buf, "AT+CREG=1\r\n");
-	response = serial_send_AT_cmd (manager, buf, len);
-	if (response == NULL)
-		modem_error_device_stalled (manager);
-    
-	for (i = 0; strstr (response, "ERROR") && i < 5; i++) {
-		if (mbm_options_debug ())
-			g_debug ("Error enabling CREG, trying again.\n");
-		sleep (2);
+    /* we can only enabled creg if the sim is unlocked */
+    if (modem_is_pin_ready (manager)) {
+        len = sprintf (buf, "AT+CREG=1\r\n");
+        response = serial_send_AT_cmd (manager, buf, len);
+        if (response == NULL)
+            modem_error_device_stalled (manager);
+        
+        for (i = 0; strstr (response, "ERROR") && i < 5; i++) {
+            if (mbm_options_debug ())
+                g_debug ("Error enabling CREG, trying again.\n");
+            sleep (2);
+            free (response);
+            response = serial_send_AT_cmd (manager, buf, len);
+        }
         free (response);
-		response = serial_send_AT_cmd (manager, buf, len);
-	}
-	free (response);
+    } else
+        priv->registration_status = MBM_REGISTRATION_NOT_POSSIBLE;
 
 	priv->unsolicited_responses_enabled = 1;
 }
@@ -955,8 +988,11 @@ void modem_check_and_handle_gps_states (MBMManager * manager)
 				 priv->new_gps_state.gps_enabled_mode);
 	}
 
-    if (gps_mode == SUPL_MODE) {
+    if (gps_mode == SUPL_MODE && !priv->supl_failed) {
         switch (priv->registration_status) {
+        case MBM_REGISTRATION_NOT_POSSIBLE:
+            enable_gps_set = 1;
+            break;
         case MBM_REGISTRATION_STATUS_HOME_NETWORK:
         case MBM_REGISTRATION_STATUS_ROAMING:
         case MBM_REGISTRATION_STATUS_DENIED:

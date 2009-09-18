@@ -40,6 +40,7 @@
 #define MBM_REGISTRATION_STATUS_DENIED 3
 #define MBM_REGISTRATION_STATUS_UNKNOWN 4
 #define MBM_REGISTRATION_STATUS_ROAMING 5
+#define MBM_REGISTRATION_NOT_POSSIBLE 6
 
 void modem_error_device_stalled (MBMManager * manager);
 
