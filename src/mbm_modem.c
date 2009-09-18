@@ -121,18 +121,27 @@ static gboolean modem_is_pin_ready (MBMManager *manager)
     char *response;
     char buf[40];
     int len;
+    int count;
     gboolean ready = FALSE;
 
     if (mbm_options_debug ())
         g_debug ("Checking if the sim card is pin locked");
 
-    len = sprintf (buf, "AT+CPIN?\r\n");
-	response = serial_send_AT_cmd (manager, buf, len);
+    count = 0;
+    while (count < 5) {
+        len = sprintf (buf, "AT+CPIN?\r\n");
+        response = serial_send_AT_cmd (manager, buf, len);
 
-    if (response && strstr (response, "READY"))
-        ready = TRUE;
+        g_debug ("%s, %s", __FUNCTION__, response);
 
-    free (response);
+        if (response && strstr (response, "READY")) {
+            ready = TRUE;
+            free (response);
+            break;
+        }
+        free (response);
+        sleep (1);
+    }
     return ready;
 }
 
