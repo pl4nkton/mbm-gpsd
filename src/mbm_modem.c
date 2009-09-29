@@ -128,7 +128,7 @@ static gboolean modem_is_pin_ready (MBMManager *manager)
         g_debug ("Checking if the sim card is pin locked");
 
     count = 0;
-    while (count < 5) {
+    while (count++ < 5) {
         len = sprintf (buf, "AT+CPIN?\r\n");
         response = serial_send_AT_cmd (manager, buf, len);
 
@@ -137,6 +137,10 @@ static gboolean modem_is_pin_ready (MBMManager *manager)
         if (response && strstr (response, "READY")) {
             ready = TRUE;
             free (response);
+            break;
+        } else if (response && strstr (response, "ERROR")) {
+            if (mbm_options_debug ())
+                g_debug ("CPIN returned ERROR. Probably no sim card inserted.");
             break;
         }
         free (response);
