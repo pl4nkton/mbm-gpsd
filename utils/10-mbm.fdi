@@ -32,7 +32,7 @@
 
  <!-- Sagarmatha devices -->
  <device>
-  <match key="info.parent" contains_outof="bdb_1904;bdb_1905;bdb_1906;bdb_1907;413c_8183;413c_8184;930_130c;930_1311">
+  <match key="info.parent" contains_outof="bdb_1904;bdb_1905;bdb_1906;bdb_1907;bdb_1911;413c_8183;413c_8184;930_130c;930_1311">
    <match key="info.parent" suffix="_if1">
     <append key="info.capabilities" type="strlist">mbm_nm</append>
 	<append key="modem.command_sets" type="strlist">GSM-07.07</append>
