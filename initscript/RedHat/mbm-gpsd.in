@@ -37,7 +37,7 @@ MBM_BIN=${sbindir}/mbm-gpsd
 # so we can rearrange this easily
 processname=mbm-gpsd
 servicename=mbm-gpsd
-pidfile=/var/run/mbm-gpsd/mbm-gpsd.pid
+pidfile=/var/run/mbm-gpsd.pid
 
 RETVAL=0
 
@@ -49,7 +49,7 @@ start()
 	echo
 
 	echo -n $"Starting mbm-gpsd daemon: "
-	daemon --check $servicename $processname --pid-file=$pidfile
+	daemon --pidfile=$pidfile --check $servicename $processname
 	RETVAL=$?
 	echo
 	if [ -n "${NETWORKWAIT}" ]; then 
