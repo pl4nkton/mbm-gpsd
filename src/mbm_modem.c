@@ -256,7 +256,7 @@ void modem_check_radio (MBMManager * manager)
 	response = serial_send_AT_cmd (manager, buf, len);
 
 	if (response) {
-		if (strstr (response, "+CFUN: 1") || strstr (response, "+CFUN: 5")) {
+		if (strstr (response, "+CFUN: 1") || strstr (response, "+CFUN: 5") || strstr(response, "+CFUN: 6")) {
 			if (mbm_options_debug ())
 				g_debug ("Radio is already on.");
             modem_check_registration_status (manager);
@@ -280,10 +280,21 @@ void modem_check_gps_customization (MBMManager * manager)
 	char *response;
 	char buf[40];
 	int len;
-	char *eercust = "AT*EERCUST=2";
+	char *eercust = "AT*EERCUST";
 
+	/* check if modem is F5521gw */
+	len = sprintf (buf, "%s=0,\"MBM_ModelID\"\r\n", eercust);
+	response = serial_send_AT_cmd (manager, buf, len);
+	if (response && strstr (response, "F5521gw")) {
+		if (mbm_options_debug ())
+			g_debug ("Model F5521gw detected.\n");
+		mbm_set_gps_customization (STAND_ALONE_MODE, 1);
+		mbm_set_gps_customization (SUPL_MODE, 1);
+		free (response);
+		return;
+	}
 	/* check if gps is customized */
-	len = sprintf (buf, "%s,\"MBM-GPS-Enable\"\r\n", eercust);
+	len = sprintf (buf, "%s=2,\"MBM-GPS-Enable\"\r\n", eercust);
 	response = serial_send_AT_cmd (manager, buf, len);
 	if (response && strstr (response, "01")) {
 		if (mbm_options_debug ())
@@ -303,7 +314,7 @@ void modem_check_gps_customization (MBMManager * manager)
 	}
 
 	/* check if gps-supl is customized */
-	len = sprintf (buf, "%s,\"MBM-GPS-SUPL-Enable\"\r\n", eercust);
+	len = sprintf (buf, "%s=2,\"MBM-GPS-SUPL-Enable\"\r\n", eercust);
 	response = serial_send_AT_cmd (manager, buf, len);
 	if (response && strstr (response, "01")) {
 		if (mbm_options_debug ())
