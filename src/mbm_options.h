@@ -30,6 +30,8 @@ gint mbm_gps_customization (gint key);
 
 void mbm_set_gps_customization (gint key, gint value);
 
+gboolean mbm_foreground (void);
+
 gint mbm_nmea_interval (void);
 
 void mbm_set_nmea_interval (gint interval);

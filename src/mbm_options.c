@@ -25,6 +25,7 @@
 #include "mbm_options.h"
 #include "gps_settings.h"
 
+static gboolean _foreground = FALSE;
 static gboolean _debug = FALSE;
 static gboolean _verbose = FALSE;
 static gint nmea_interval = 1;
@@ -54,6 +55,8 @@ void mbm_options_parse (int argc, char *argv[])
 	GOptionContext *opt_ctx;
 	GError *error = NULL;
 	GOptionEntry entries[] = {
+		{"foreground", 'f', 0, G_OPTION_ARG_NONE, &_foreground,
+		 "Keep the daemon process in foreground", NULL},
 		{"debug", 'N', 0, G_OPTION_ARG_NONE, &_debug,
 		 "Output to console rather than syslog", NULL},
 		{"interval", 'i', 0, G_OPTION_ARG_INT, &nmea_interval,
@@ -133,6 +136,11 @@ void mbm_set_gps_customization (gint key, gint value)
 	default:
 		break;
 	}
+}
+
+gboolean mbm_foreground (void)
+{
+	return _foreground;
 }
 
 gint mbm_nmea_interval (void)

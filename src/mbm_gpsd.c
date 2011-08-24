@@ -32,6 +32,7 @@
 #include <termios.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/inotify.h>
 #include <libhal.h>
 #include <dbus/dbus.h>
@@ -152,6 +153,22 @@ int main (int argc, char *argv[])
 
 	mbm_options_parse (argc, argv);
 	g_type_init ();
+
+	if (!mbm_foreground()) {
+		pid_t pid, sid;
+
+		pid = fork();
+		if (pid < 0) exit(EXIT_FAILURE);
+		if (pid > 0) exit(EXIT_SUCCESS);
+
+		umask(0);
+		sid = setsid();
+		if (sid < 0) exit(EXIT_FAILURE);
+		if ((chdir("/")) < 0) exit(EXIT_FAILURE);
+
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
+	}
 
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
