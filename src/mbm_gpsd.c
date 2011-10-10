@@ -34,7 +34,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/inotify.h>
-#include <libhal.h>
 #include <dbus/dbus.h>
 #include <pthread.h>
 #include <semaphore.h>

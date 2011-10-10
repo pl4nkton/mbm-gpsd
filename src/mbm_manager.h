@@ -123,11 +123,8 @@ typedef enum {
 typedef struct {
 	void *connection;
 	void *hal_ctx;
-	gchar *nmea_dev;
-	gchar *ctrl_dev;
-	gchar *nmea_udi;
-	gchar *ctrl_udi;
-	gchar *driver;
+	char *nmea_dev;
+	char *ctrl_dev;
 	gint connected;
     int registration_status;
 

@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gmodule.h>
-#include <libhal.h>
 #include <glib/gtypes.h>
 #include <glib-object.h>
 #include <dbus/dbus-glib.h>

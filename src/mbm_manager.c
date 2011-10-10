@@ -28,7 +28,6 @@
 #include <string.h>
 #include <sys/inotify.h>
 #include <gmodule.h>
-#include <libhal.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <syslog.h>
@@ -38,7 +37,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/inotify.h>
-#include <libhal.h>
+#include <libudev.h>
 #include <dbus/dbus.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -64,8 +63,15 @@ extern int chmod (__const char *__file, __mode_t __mode);
 extern int grantpt (int fd);
 extern int unlockpt (int fildes);
 
-static char *gps_nmea_capability = "mbm_gps_nmea";
-static char *gps_ctrl_capability = "mbm_gps_ctrl";
+enum {
+	GPS_NMEA_CAP=0,
+	GPS_CTRL_CAP=1
+};
+
+const char *gps_capabilities[2] = {
+	"NMEA",
+	"CTRL"
+};
 
 void
 impl_mbm_manager_enable (MBMManager * manager, gboolean enable,
@@ -92,65 +98,84 @@ MBMManager *mbm_manager_new (void)
 	return g_object_new (MBM_TYPE_MANAGER, NULL);
 }
 
-static char *get_driver_name (LibHalContext * ctx, const char *udi)
-{
-	char *parent_udi;
-	char *driver = NULL;
-
-	parent_udi = libhal_device_get_property_string (ctx, udi, "info.parent",
-													NULL);
-	if (parent_udi) {
-		driver = libhal_device_get_property_string (ctx, parent_udi,
-													"info.linux.driver", NULL);
-		libhal_free_string (parent_udi);
-	}
-
-	return driver;
-}
-
 /*
- * Hal lookup of the given capability.
+ * udev lookup of the given capability.
  * A string to the device file e.g. /dev/ttyACM0 is returned if successful
  * otherwise an empty string is returned.
  */
-static char *find_device_file (LibHalContext * _ctx, char *capability,
-							   char **udi)
+
+static char *find_device_file (int capability)
 {
-	char *gps_udi, **devices;
-	DBusError error;
-	int num;
-	char *deviceFile = NULL;
-	dbus_error_init (&error);
+	struct udev *udev;
+	struct udev_enumerate *enumerate;
+	struct udev_list_entry *devices, *dev_list_entry;
+	struct udev_device *dev, *parent_dev, *pparent_dev;
+	const char *iface, *path;
+	const char *idvendor, *idproduct;
+	char *device = NULL;
 
-	/* find the UDI of the devices with the given capability */
-	devices = libhal_find_device_by_capability (_ctx, capability, &num, &error);
-	if (!num) {
-		g_debug ("HAL couldn't find any devices with capability %s.",
-				 capability);
-		return NULL;
+	udev = udev_new();
+	if (!udev) return NULL;
+
+	enumerate = udev_enumerate_new(udev);
+	udev_enumerate_add_match_subsystem(enumerate, "tty");
+	udev_enumerate_add_match_subsystem(enumerate, "usb");
+	udev_enumerate_scan_devices(enumerate);
+
+	devices = udev_enumerate_get_list_entry(enumerate);
+	udev_list_entry_foreach(dev_list_entry, devices) {
+		path = udev_list_entry_get_name(dev_list_entry);
+		dev = udev_device_new_from_syspath(udev, path);
+		parent_dev = udev_device_get_parent(dev);
+		pparent_dev = udev_device_get_parent(parent_dev);
+		idvendor = udev_device_get_sysattr_value(pparent_dev,
+			"idVendor");
+		idproduct = udev_device_get_sysattr_value(pparent_dev,
+			"idProduct");
+		iface = udev_device_get_sysattr_value(parent_dev,
+			"bInterfaceNumber");
+		if (!idvendor || !idproduct || !iface) {
+			udev_device_unref (dev);
+			continue;
+		}
+
+		/* all the information from the legacy hal fdi file 
+		 * related to gps_{ctrl,nmea}_capability is integrated
+		 * in the following test
+		 */
+		if ((!strcmp(idvendor, "0bdb") &&
+		     (!strcmp(idproduct, "1911") ||
+		      !strcmp(idproduct, "1904") ||
+		      !strcmp(idproduct, "1905") ||
+		      !strcmp(idproduct, "1906") ||
+		      !strcmp(idproduct, "1907") ||
+		      !strcmp(idproduct, "1911"))) ||
+		    (!strcmp(idvendor, "413c") &&
+		     (!strcmp(idproduct, "8183") ||
+		      !strcmp(idproduct, "8184"))) ||
+		    (!strcmp(idvendor, "0930") &&
+		     (!strcmp(idproduct, "130c") ||
+		      !strcmp(idproduct, "1311")))) {
+			if ((capability == GPS_NMEA_CAP && !strcmp(iface,"09")) ||
+			    (capability == GPS_CTRL_CAP && !strcmp(iface,"05")))
+			{
+				device = strdup(udev_device_get_devnode(dev));
+				udev_device_unref (dev);
+				if (mbm_options_debug ()) {
+					g_debug ("found device %s for capability %s",
+					device, gps_capabilities[capability]);
+				}
+				break;
+			}
+		}
+		udev_device_unref (dev);
 	}
-	/* only one device should have been found so use that one */
-	gps_udi = strdup (devices[0]);
-	if (mbm_options_debug ())
-		g_debug ("%s udi is %s", capability, gps_udi);
-
-	if (udi)
-		*udi = gps_udi;
-
-	/* now find the device file for the UDI */
-	deviceFile = libhal_device_get_property_string (_ctx, gps_udi,
-													"linux.device_file",
-													&error);
-	if (!deviceFile) {
-		g_error ("HAL couldn't find the linux.device_file for capability %s.",
-				 capability);
-		return "";
-	}
-	if (mbm_options_debug ())
-		g_debug ("The deviceFile for capability %s is %s", capability,
-				 deviceFile);
-
-	return deviceFile;
+	udev_enumerate_unref(enumerate);
+	udev_unref(udev);
+	if (!device)
+		g_debug ("Couldn't find any device with capability %s.",
+			gps_capabilities[capability]);
+	return device;
 }
 
 static void init_mbm_modem (MBMManager * manager)
@@ -183,41 +208,23 @@ static void init_mbm_modem (MBMManager * manager)
 	priv->gps_port_not_defined = 1;
 }
 
-static void *create_mbm_modem (MBMManager * manager, const char *udi)
+static void *create_mbm_modem (MBMManager * manager)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-	char *ctrl_udi, *nmea_udi;
 
 	/* set the ports */
-	priv->nmea_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_nmea_capability, &nmea_udi);
-	priv->ctrl_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_ctrl_capability, &ctrl_udi);
+	priv->nmea_dev = find_device_file (GPS_NMEA_CAP);
+	priv->ctrl_dev = find_device_file (GPS_CTRL_CAP);
 
-	priv->driver = get_driver_name ((LibHalContext *) priv->hal_ctx, nmea_udi);
-
-	g_return_val_if_fail (priv->driver != NULL, NULL);
+	if (!priv->nmea_dev || !priv->ctrl_dev) {
+		g_warning ("No GPS devices found. Exiting.");
+		mbm_manager_quit (manager);
+		exit (0);
+	}
 
 	init_mbm_modem (manager);
 
 	return NULL;
-}
-
-static void add_modem (MBMManager * manager, const char *udi, void *modem)
-{
-	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-
-	g_debug ("Added modem %s", udi);
-	priv->modem = modem;
-
-	g_signal_emit (manager, signals[DEVICE_ADDED], 0, udi);
-}
-
-static void *modem_exists (MBMManager * manager, const char *udi)
-{
-	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-
-	return (void *)priv->modem;
 }
 
 void
@@ -227,75 +234,9 @@ impl_mbm_manager_enable (MBMManager * manager, gboolean enable,
 	dbus_g_method_return (context);
 }
 
-static void device_added (LibHalContext * ctx, const char *udi)
-{
-    if (mbm_options_debug ()) {
-        g_debug ("device_added udi=%s", udi);
-        g_debug ("Won't handle it...");
-    }
-}
-
-static void device_removed (LibHalContext * ctx, const char *udi)
-{
-	MBMManager *manager = MBM_MANAGER (libhal_ctx_get_user_data (ctx));
-	void *modem;
-
-	modem = modem_exists (manager, udi);
-	if (modem) {
-		g_debug ("Removed modem %s", udi);
-		g_signal_emit (manager, signals[DEVICE_REMOVED], 0, udi);
-		MBM_MANAGER_GET_PRIVATE (manager)->modem = 0;
-	}
-}
-
-static void
-device_new_capability (LibHalContext * ctx, const char *udi,
-					   const char *capability)
-{
-    if (mbm_options_debug ())
-        g_debug ("device_new_capability");
-	device_added (ctx, udi);
-}
-
 static void create_initial_modems (MBMManager * manager)
 {
-	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-	char **devices;
-	int num_devices;
-	int i;
-	DBusError err;
-
-	dbus_error_init (&err);
-	devices = libhal_find_device_by_capability ((LibHalContext *) priv->hal_ctx,
-												gps_nmea_capability,
-												&num_devices, &err);
-	if (dbus_error_is_set (&err)) {
-		g_warning ("Could not list HAL devices: %s", err.message);
-		dbus_error_free (&err);
-	}
-
-    if (num_devices == 0) {
-        g_warning ("No GPS devices found. Exiting.");
-        mbm_manager_quit (manager);
-        exit (0);
-    }
-
-	if (devices) {
-		for (i = 0; i < num_devices; i++) {
-			char *udi = devices[i];
-			void *modem;
-
-			if (modem_exists (manager, udi))
-				/* Already exists, most likely handled by a plugin */
-				continue;
-
-			modem = create_mbm_modem (manager, udi);
-			if (modem)
-				add_modem (manager, g_strdup (udi), modem);
-		}
-	}
-
-	g_strfreev (devices);
+	create_mbm_modem (manager);
 }
 
 static void set_pty_attributes (int fd)
@@ -413,8 +354,6 @@ static gboolean probe_gps_ctrl (MBMManager * manager)
 static gboolean recover_stalled_ctrl_device (MBMManager * manager)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-	char *nmea_udi;
-	char *ctrl_udi;
 	char buf[15];
 	int len, result, count, gps_enabled_current, probe_attempts;
 
@@ -439,20 +378,25 @@ static gboolean recover_stalled_ctrl_device (MBMManager * manager)
 	sleep (10);
 	g_debug ("Trying to restore the file handles");
 
-	priv->nmea_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_nmea_capability, &nmea_udi);
-	priv->ctrl_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_ctrl_capability, &ctrl_udi);
+	if (priv->nmea_dev)
+		g_free (priv->nmea_dev);
+	if (priv->ctrl_dev)
+		g_free (priv->ctrl_dev);
+
+	priv->nmea_dev = find_device_file (GPS_NMEA_CAP);
+	priv->ctrl_dev = find_device_file (GPS_CTRL_CAP);
 
 	count = 0;
 	while (count < 5) {
 		if ((!priv->nmea_dev || !priv->ctrl_dev)) {
 			g_debug ("All devices weren't found. Trying again in 5 seconds.");
 			sleep (5);
-			priv->nmea_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-											   gps_nmea_capability, &nmea_udi);
-			priv->ctrl_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-											   gps_ctrl_capability, &ctrl_udi);
+			if (priv->nmea_dev)
+				g_free (priv->nmea_dev);
+			if (priv->ctrl_dev)
+				g_free (priv->ctrl_dev);
+			priv->nmea_dev = find_device_file (GPS_NMEA_CAP);
+			priv->ctrl_dev = find_device_file (GPS_CTRL_CAP);
 			count++;
 		} else {
 			g_debug ("Finally found all devices! Continuing.");
@@ -506,8 +450,6 @@ static void pm_prepare_for_sleep (MBMManager * manager)
 static void pm_wake_up (MBMManager * manager)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-	char *nmea_udi;
-	char *ctrl_udi;
 	int gps_enabled_current;
 	gps_enabled_current = priv->gps_enabled;
 
@@ -517,10 +459,13 @@ static void pm_wake_up (MBMManager * manager)
 	sleep (10);
 
 	/* set the ports */
-	priv->nmea_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_nmea_capability, &nmea_udi);
-	priv->ctrl_dev = find_device_file ((LibHalContext *) priv->hal_ctx,
-									   gps_ctrl_capability, &ctrl_udi);
+	if (priv->nmea_dev)
+		g_free (priv->nmea_dev);
+	if (priv->ctrl_dev)
+		g_free (priv->ctrl_dev);
+
+	priv->nmea_dev = find_device_file (GPS_NMEA_CAP);
+	priv->ctrl_dev = find_device_file (GPS_CTRL_CAP);
 
 	init_mbm_modem (manager);
 
@@ -786,24 +731,7 @@ void _mbm_manager_init (MBMManager * manager)
 	dbus_g_connection_register_g_object ((DBusGConnection *) priv->connection,
 										 MBM_DBUS_PATH, G_OBJECT (manager));
 
-	priv->hal_ctx = libhal_ctx_new ();
-	if (!priv->hal_ctx)
-		g_error ("Could not get connection to the HAL service.");
-
-	libhal_ctx_set_dbus_connection ((LibHalContext *) priv->hal_ctx,
-									dbus_g_connection_get_connection ((DBusGConnection *) priv->connection));
-
 	dbus_error_init (&dbus_error);
-	if (!libhal_ctx_init ((LibHalContext *) priv->hal_ctx, &dbus_error))
-		g_error ("libhal_ctx_init() failed: %s\n"
-				 "Make sure the hal daemon is running?", dbus_error.message);
-
-	libhal_ctx_set_user_data ((LibHalContext *) priv->hal_ctx, manager);
-	libhal_ctx_set_device_added ((LibHalContext *) priv->hal_ctx, device_added);
-	libhal_ctx_set_device_removed ((LibHalContext *) priv->hal_ctx,
-								   device_removed);
-	libhal_ctx_set_device_new_capability ((LibHalContext *) priv->hal_ctx,
-										  device_new_capability);
 
 	priv->ifd = inotify_init ();
 	if (priv->ifd == -1) {
@@ -854,23 +782,12 @@ static void mbm_manager_init (MBMManager * manager)
 void _finalize (MBMManagerPrivate * priv)
 {
 
-	if (priv->hal_ctx) {
-		libhal_ctx_shutdown ((LibHalContext *) priv->hal_ctx, NULL);
-		libhal_ctx_free ((LibHalContext *) priv->hal_ctx);
-	}
-
 	if (priv->connection)
 		dbus_g_connection_unref ((DBusGConnection *) priv->connection);
-
 	if (priv->nmea_dev)
 		g_free (priv->nmea_dev);
 	if (priv->ctrl_dev)
 		g_free (priv->ctrl_dev);
-	if (priv->nmea_udi)
-		g_free (priv->nmea_udi);
-	if (priv->ctrl_udi)
-		g_free (priv->ctrl_udi);
-
 }
 
 static void finalize (GObject * object)

@@ -48,7 +48,7 @@ BUILT_SOURCES = 					\
 mbm_gpsd_CPPFLAGS = 							\
 	$(DBUS_CFLAGS)									\
 	$(GTHREAD_CFLAGS)								\
-	$(HAL_CFLAGS)									\
+	$(LIBUDEV_CFLAGS)									\
 	$(OPENSSL_CFLAGS)								\
 	$(LIBNL_CFLAGS)								\
 	$(GMIME_CFLAGS)								\	
@@ -67,7 +67,7 @@ mbm_gpsd_CPPFLAGS = 							\
 mbm_gpsd_LDADD = 							\
 			$(DBUS_LIBS)						\
 			$(GTHREAD_LIBS)					\
-			$(HAL_LIBS)						\
+			$(LIBUDEV_LIBS)						\
 			$(LIBNL_LIBS)					\
 			$(GMIME_LIBS)
 
