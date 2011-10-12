@@ -144,7 +144,7 @@ static char *find_device_file (int capability)
 		 * in the following test
 		 */
 		if ((!strcmp(idvendor, "0bdb") &&
-		     (!strcmp(idproduct, "1911") ||
+		     (!strcmp(idproduct, "1900") ||
 		      !strcmp(idproduct, "1904") ||
 		      !strcmp(idproduct, "1905") ||
 		      !strcmp(idproduct, "1906") ||
