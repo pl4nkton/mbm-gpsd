@@ -152,7 +152,8 @@ static char *find_device_file (int capability)
 		      !strcmp(idproduct, "1911"))) ||
 		    (!strcmp(idvendor, "413c") &&
 		     (!strcmp(idproduct, "8183") ||
-		      !strcmp(idproduct, "8184"))) ||
+		      !strcmp(idproduct, "8184") ||
+		      !strcmp(idproduct, "818d"))) ||
 		    (!strcmp(idvendor, "0930") &&
 		     (!strcmp(idproduct, "130c") ||
 		      !strcmp(idproduct, "1311")))) {
