@@ -16,8 +16,6 @@ MBM_BIN=${sbindir}/mbm-gpsd
 PID=`pidof -o %PPID $MBM_BIN`
 case "$1" in
 	start)
-		ck_daemon hal && /etc/rc.d/hal start
-		sleep 1
 		stat_busy "Starting mbm-gpsd"
 		if [ -z "$PID" ]; then
 			$MBM_BIN > /dev/null 2>&1 &
