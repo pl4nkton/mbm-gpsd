@@ -78,7 +78,19 @@ dist_sysconf_DATA = mbm-gpsd.conf
 
 EXTRA_DIST = \
 	$(dbusservice_DATA) \
-	$(MBM_DATA)
+	$(MBM_DATA) \
+	ConnectionProfiles.csv \
+	gps_settings.h \
+	mbm_callback_info.h \
+	mbm_gpsd_type.h \
+	mbm_errors.h \
+	mbm_manager.h \
+	mbm_modem.h \
+	mbm_options.h \
+	mbm_parse.h \
+	mbm_serial.h \
+	mbm_supl.h \
+	mnc_list.h
 
 rundir=$(localstatedir)/run/MBM
 install-data-hook:

@@ -1,3 +1,3 @@
 EXTRA_DIST = \
-	mm-test.py
+	mbm_gpsd.sh
 

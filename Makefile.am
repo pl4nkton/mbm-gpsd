@@ -1,10 +1,11 @@
-SUBDIRS = src marshallers initscript utils
+SUBDIRS = src marshallers initscript utils test introspection man policy po
 
 EXTRA_DIST =				\
-	CONTRIBUTING			\
 	intltool-extract.in		\
 	intltool-merge.in		\
-	intltool-update.in
+	intltool-update.in		\
+	version.h			\
+	README.dbus
 
 dbusservicedir = $(DBUS_SYS_DIR)
 dbusservice_DATA = org.mbm.MbmGps.conf

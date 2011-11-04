@@ -1,3 +1,7 @@
+EXTRA_DIST =		\
+	01mbm		\
+	mbm_powerstate	\
+	mbm_reset
 
 install-data-hook:
 	install -D 01mbm $(DESTDIR)/$(sysconfdir)/pm/sleep.d/01mbm
