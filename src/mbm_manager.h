@@ -22,8 +22,7 @@
 #ifndef MBM_MANAGER_H
 #define MBM_MANAGER_H
 
-#include <glib/gtypes.h>
-#include <glib-object.h>
+#include <glib.h>
 #include <sys/types.h>
 #include <time.h>
 #include <dbus/dbus.h>
