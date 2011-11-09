@@ -169,10 +169,18 @@ int main (int argc, char *argv[])
 		close(STDERR_FILENO);
 	}
 
+/*
+ * Threading is always enabled starting from GLib 2.31.0.
+ * See also http://developer.gnome.org/glib/2.31/glib-Deprecated-Thread-APIs.html.
+ */
+#if !GLIB_CHECK_VERSION (2,31,0)
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
 
 	dbus_g_thread_init ();
+#else
+        dbus_threads_init_default ();
+#endif
 
 	g_debug ("Started version: %s", VERSION);
 
