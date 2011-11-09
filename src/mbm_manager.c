@@ -68,9 +68,13 @@ enum {
 	GPS_CTRL_CAP=1
 };
 
+/*
+ * these strings should match the MBM_CAPABILITY property values
+ * as defined in the udev rules file
+ */
 const char *gps_capabilities[2] = {
-	"NMEA",
-	"CTRL"
+	"gps_nmea",
+	"gps_ctrl"
 };
 
 void
@@ -109,67 +113,34 @@ static char *find_device_file (int capability)
 	struct udev *udev;
 	struct udev_enumerate *enumerate;
 	struct udev_list_entry *devices, *dev_list_entry;
-	struct udev_device *dev, *parent_dev, *pparent_dev;
-	const char *iface, *path;
-	const char *idvendor, *idproduct;
+	struct udev_device *dev;
+	const char *path;
 	char *device = NULL;
 
 	udev = udev_new();
 	if (!udev) return NULL;
 
 	enumerate = udev_enumerate_new(udev);
-	udev_enumerate_add_match_subsystem(enumerate, "tty");
-	udev_enumerate_add_match_subsystem(enumerate, "usb");
+	udev_enumerate_add_match_property(enumerate, "MBM_CAPABILITY",
+            gps_capabilities[capability]);
 	udev_enumerate_scan_devices(enumerate);
 
 	devices = udev_enumerate_get_list_entry(enumerate);
 	udev_list_entry_foreach(dev_list_entry, devices) {
 		path = udev_list_entry_get_name(dev_list_entry);
 		dev = udev_device_new_from_syspath(udev, path);
-		parent_dev = udev_device_get_parent(dev);
-		pparent_dev = udev_device_get_parent(parent_dev);
-		idvendor = udev_device_get_sysattr_value(pparent_dev,
-			"idVendor");
-		idproduct = udev_device_get_sysattr_value(pparent_dev,
-			"idProduct");
-		iface = udev_device_get_sysattr_value(parent_dev,
-			"bInterfaceNumber");
-		if (!idvendor || !idproduct || !iface) {
-			udev_device_unref (dev);
-			continue;
-		}
-
-		/* all the information from the legacy hal fdi file 
-		 * related to gps_{ctrl,nmea}_capability is integrated
-		 * in the following test
-		 */
-		if ((!strcmp(idvendor, "0bdb") &&
-		     (!strcmp(idproduct, "1900") ||
-		      !strcmp(idproduct, "1904") ||
-		      !strcmp(idproduct, "1905") ||
-		      !strcmp(idproduct, "1906") ||
-		      !strcmp(idproduct, "1907") ||
-		      !strcmp(idproduct, "1911"))) ||
-		    (!strcmp(idvendor, "413c") &&
-		     (!strcmp(idproduct, "8183") ||
-		      !strcmp(idproduct, "8184") ||
-		      !strcmp(idproduct, "818d"))) ||
-		    (!strcmp(idvendor, "0930") &&
-		     (!strcmp(idproduct, "130c") ||
-		      !strcmp(idproduct, "1311")))) {
-			if ((capability == GPS_NMEA_CAP && !strcmp(iface,"09")) ||
-			    (capability == GPS_CTRL_CAP && !strcmp(iface,"05")))
-			{
-				device = strdup(udev_device_get_devnode(dev));
-				udev_device_unref (dev);
-				if (mbm_options_debug ()) {
-					g_debug ("found device %s for capability %s",
-					device, gps_capabilities[capability]);
-				}
-				break;
-			}
-		}
-		udev_device_unref (dev);
+                if (!udev_device_get_devnode(dev))
+                        continue;
+                device = strdup(udev_device_get_devnode(dev));
+                udev_device_unref (dev);
+                if (mbm_options_debug ()) {
+                        g_debug ("found device %s for capability %s",
+                        device, gps_capabilities[capability]);
+                }
+                /*
+                 * the code returns the first matching device found
+                 */
+                break;
 	}
 	udev_enumerate_unref(enumerate);
 	udev_unref(udev);
