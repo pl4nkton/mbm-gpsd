@@ -449,6 +449,7 @@ gint main_loop (gpointer data)
 	char buf[512];
 	int len;
 	int i, j;
+    int written;
 	MBMManager *manager = (MBMManager *) data;
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 
@@ -614,11 +615,12 @@ gint main_loop (gpointer data)
 				}
                 
                 if (len > 0) {
-					int written;
 					if (mbm_options_debug ())
 						g_debug ("Client: --> \"%s\"", buf);
 					/* first echo back to client */
 					written = write (priv->client[i].master_fd, buf, len);
+                    if (written < 0)
+                        g_debug ("Unable to write to client[%d]", i);
 					/* then check for a complete command */
 					modem_parse_client (manager, i, buf, len);
 				}
