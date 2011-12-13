@@ -731,19 +731,22 @@ void modem_parse_client (MBMManager * manager, int i, char *buf, int len)
 
 static void send_unsolicited_to_client (MBMManager *manager, char *str, int len)
 {
-    int i, written;
+    int i;
+    int written = 0;
     MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
     
     for (i = 0; i < MAX_CLIENTS; i++) {
         if (priv->client[i].active)
             written = write (priv->client[i].master_fd, str, len);
+        if (written < 0)
+            g_debug ("Unable to write to clien[%d]", i);
     }
 }
 
 static void parse_e2gpsstat (MBMManager *manager, char *buf)
 {
     char *str, *str2;
-    int a, b, c, d, e;
+    int b, c, d, e;
     MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
     
     str = g_strrstr (buf, UR_GPS);
@@ -754,7 +757,7 @@ static void parse_e2gpsstat (MBMManager *manager, char *buf)
 			   in that case we need to handle both messages otherwise we may not discover that supl has
 			   failed for example
             */
-			a = str2[12] - '0';	/* 0 unsolicited responses off, 1 on */
+			/* a = str2[12] - '0';*/	/* 0 unsolicited responses off, 1 on */
 			b = str2[14] - '0';	/* 0 gps off, 1 gps searching, 2 gps ok */
 			c = str2[16] - '0';	/* 0 temp ok, 1 gps search limited, */
 			d = str2[18] - '0';	/* gps mode, 0 none, 1 stand alone, 3 supl */
@@ -769,7 +772,7 @@ static void parse_e2gpsstat (MBMManager *manager, char *buf)
             send_unsolicited_to_client (manager, str2, 23);
 		}
 
-		a = str[12] - '0';		/* 0 unsolicited responses off, 1 on */
+		/* a = str[12] - '0';*/		/* 0 unsolicited responses off, 1 on */
 		b = str[14] - '0';		/* 0 gps off, 1 gps searching, 2 gps ok */
 		c = str[16] - '0';		/* 0 temp ok, 1 gps search limited, */
 		d = str[18] - '0';		/* gps mode, 0 none, 1 stand alone, 3 supl */
@@ -794,12 +797,12 @@ static void parse_e2gpsstat (MBMManager *manager, char *buf)
 static void parse_e2cfun (MBMManager *manager, char *buf)
 {
     char *str;
-    int a, b, c;
+    int b, c;
     MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
     
     str = strstr (buf, UR_E2CFUN);
 	if (str) {
-		a = str[9] - '0';		/* mode */
+		/* a = str[9] - '0';*/		/* mode */
 		b = str[11] - '0';		/* fun */
 		c = str[13] - '0';		/* w_disable */
 		priv->new_gps_state.cfun = b;
@@ -814,7 +817,7 @@ static void parse_e2cfun (MBMManager *manager, char *buf)
 
 static void parse_e2gpssuplni (MBMManager *manager, char *buf)
 {
-    int a, b, c;
+    int b, c;
 	char *str, *msg_id_end;
     GString *to_client;
     gchar **tmp;
@@ -823,7 +826,7 @@ static void parse_e2gpssuplni (MBMManager *manager, char *buf)
 	if (str) {
 		if (mbm_options_debug ())
 			g_debug ("Supl Network Initiated unsolicited response received.\n");
-		a = str[14] - '0';		/* enable ni unsol */
+		/* a = str[14] - '0';*/		/* enable ni unsol */
 		msg_id_end = strchr (&str[14], ',');
 		b = atoi (msg_id_end + 1);	/* message id, 0-255 */
 		msg_id_end = strchr (msg_id_end + 1, ',');
@@ -863,7 +866,6 @@ static void parse_e2gpssuplni (MBMManager *manager, char *buf)
 
 static void parse_e2certun (MBMManager *manager, char *buf)
 {
-    int a, b, c;
 	char *str, *msg_id_end;
     GString *to_client;
     gchar **tmp;
@@ -873,11 +875,11 @@ static void parse_e2certun (MBMManager *manager, char *buf)
 		if (mbm_options_debug ())
 			g_debug
 				("Supl certificate unknown unsolicited response received.\n");
-		a = str[11] - '0';		/* Unsolicited responses enabled */
+		/* a = str[11] - '0';*/		/* Unsolicited responses enabled */
 		msg_id_end = strchr (&str[11], ',');
-		b = atoi (msg_id_end + 1);	/* message id, 0-255 */
+		/* b = atoi (msg_id_end + 1);*/	/* message id, 0-255 */
 		msg_id_end = strchr (msg_id_end + 1, ',');
-		c = msg_id_end[1] - '0';	/* application, 1 for supl */
+		/* c = msg_id_end[1] - '0';*/	/* application, 1 for supl */
         
 		tmp = g_strsplit (str, "\r\n", 1);
         

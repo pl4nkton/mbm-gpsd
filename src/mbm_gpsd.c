@@ -138,7 +138,6 @@ int main (int argc, char *argv[])
 {
 	struct sigaction sig_action, old_action;
 	MBMManager *manager;
-	MBMManagerPrivate *priv;
 
 	sig_action.sa_handler = sig_quit;
 	sigemptyset (&sig_action.sa_mask);
@@ -195,8 +194,6 @@ int main (int argc, char *argv[])
 		return -1;
 
 	g_manager = manager = mbm_manager_new ();
-
-	priv = MBM_MANAGER_GET_PRIVATE (manager);
 
 	g_main_loop_run (g_loop);
 
