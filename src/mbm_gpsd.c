@@ -134,6 +134,11 @@ void sig_quit (int sig)
     }
 }
 
+static void nolog(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
+{
+       /* NOP */
+}
+
 int main (int argc, char *argv[])
 {
 	struct sigaction sig_action, old_action;
@@ -164,6 +169,7 @@ int main (int argc, char *argv[])
 		if (sid < 0) exit(EXIT_FAILURE);
 		if ((chdir("/")) < 0) exit(EXIT_FAILURE);
 
+        g_log_set_default_handler(nolog, NULL);
 		close(STDOUT_FILENO);
 		close(STDERR_FILENO);
 	}
