@@ -122,25 +122,25 @@ static char *find_device_file (int capability)
 
 	enumerate = udev_enumerate_new(udev);
 	udev_enumerate_add_match_property(enumerate, "MBM_CAPABILITY",
-            gps_capabilities[capability]);
+									  gps_capabilities[capability]);
 	udev_enumerate_scan_devices(enumerate);
 
 	devices = udev_enumerate_get_list_entry(enumerate);
 	udev_list_entry_foreach(dev_list_entry, devices) {
 		path = udev_list_entry_get_name(dev_list_entry);
 		dev = udev_device_new_from_syspath(udev, path);
-                if (!udev_device_get_devnode(dev))
-                        continue;
-                device = strdup(udev_device_get_devnode(dev));
-                udev_device_unref (dev);
-                if (mbm_options_debug ()) {
-                        g_debug ("found device %s for capability %s",
-                        device, gps_capabilities[capability]);
-                }
-                /*
-                 * the code returns the first matching device found
-                 */
-                break;
+		if (!udev_device_get_devnode(dev))
+			continue;
+		device = strdup(udev_device_get_devnode(dev));
+		udev_device_unref (dev);
+		if (mbm_options_debug ()) {
+			g_debug ("found device %s for capability %s",
+					 device, gps_capabilities[capability]);
+		}
+		/*
+		 * the code returns the first matching device found
+		 */
+		break;
 	}
 	udev_enumerate_unref(enumerate);
 	udev_unref(udev);
@@ -153,7 +153,7 @@ static char *find_device_file (int capability)
 static void init_mbm_modem (MBMManager * manager)
 {
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
-    
+
 	modem_open_gps_ctrl (manager);
 	/* check if module has stalled */
 	if (!probe_gps_ctrl (manager)) {
@@ -162,19 +162,19 @@ static void init_mbm_modem (MBMManager * manager)
 			modem_error_device_stalled (manager);
 	}
 
-    modem_check_gps_customization (manager);
+	modem_check_gps_customization (manager);
 
 	modem_check_pin (manager);
-    modem_enable_unsolicited_responses (manager);
+	modem_enable_unsolicited_responses (manager);
 	modem_check_radio (manager);
 
-    if (!mbm_gps_customization (STAND_ALONE_MODE)) {
-        g_debug ("The module does not have GPS functionality. Exiting.");
-        save_settings ();
-        mbm_manager_quit (manager);
-        exit (0);
-    }
-    
+	if (!mbm_gps_customization (STAND_ALONE_MODE)) {
+		g_debug ("The module does not have GPS functionality. Exiting.");
+		save_settings ();
+		mbm_manager_quit (manager);
+		exit (0);
+	}
+
 	modem_open_gps_nmea (manager);
 
 	priv->gps_port_not_defined = 1;
@@ -335,8 +335,8 @@ static gboolean recover_stalled_ctrl_device (MBMManager * manager)
 	g_debug ("Resetting device");
 	len = sprintf (buf, "AT*E2RESET\r\n");
 	result = write (priv->ctrl_fd, buf, len);
-    if (result == -1)
-        g_debug ("Bad result from RESET write. Recovery proabably will not work.");
+	if (result == -1)
+		g_debug ("Bad result from RESET write. Recovery proabably will not work.");
 
 	g_debug ("Closing file handles");
 	tcflush (priv->nmea_fd, TCIOFLUSH);
@@ -375,9 +375,9 @@ static gboolean recover_stalled_ctrl_device (MBMManager * manager)
 			break;
 		}
 	}
-    
-    if (count >= 5)
-        g_error ("Unable to find all devices. Giving up.");
+
+	if (count >= 5)
+		g_error ("Unable to find all devices. Giving up.");
 
 	modem_open_gps_ctrl (manager);
 
@@ -394,10 +394,10 @@ static gboolean recover_stalled_ctrl_device (MBMManager * manager)
 			return TRUE;
 		}
 	}
-    
-    g_debug ("The recover didn't help! :(\n");
-    g_debug ("Giving up...");
-    return FALSE;
+
+	g_debug ("The recover didn't help! :(\n");
+	g_debug ("Giving up...");
+	return FALSE;
 }
 
 static void pm_prepare_for_sleep (MBMManager * manager)
@@ -409,7 +409,7 @@ static void pm_prepare_for_sleep (MBMManager * manager)
 
 	remove_supl_setup (manager);
 	modem_disable_unsolicited_responses (manager);
-    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
+	priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 	modem_disable_gps (manager);
 	tcflush (priv->nmea_fd, TCIOFLUSH);
 	tcflush (priv->ctrl_fd, TCIOFLUSH);
@@ -449,7 +449,7 @@ gint main_loop (gpointer data)
 	char buf[512];
 	int len;
 	int i, j;
-    int written;
+	int written;
 	MBMManager *manager = (MBMManager *) data;
 	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (manager);
 
@@ -477,7 +477,7 @@ gint main_loop (gpointer data)
 			if (mbm_options_debug ())
 				g_debug ("Entering suspend state");
 			priv->wait_for_sleep = 1;
-            dbus_g_method_return (priv->dbus_suspend_context);
+			dbus_g_method_return (priv->dbus_suspend_context);
 			continue;
 		} else if (priv->wait_for_sleep) {
 			priv->wait_for_sleep = 0;
@@ -596,7 +596,7 @@ gint main_loop (gpointer data)
 				if (mbm_options_debug ())
 					g_debug ("Client: <-- %d, \"%s\"", len, buf);
 
-                if (len < 0) {
+				if (len < 0) {
 					if (mbm_options_debug ())
 						g_debug ("Error: client read %d, probably closed", len);
 					/* shutdown client port */
@@ -613,14 +613,14 @@ gint main_loop (gpointer data)
 					if (!priv->client_connections)
 						modem_disable_gps (manager);
 				}
-                
-                if (len > 0) {
+
+				if (len > 0) {
 					if (mbm_options_debug ())
 						g_debug ("Client: --> \"%s\"", buf);
 					/* first echo back to client */
 					written = write (priv->client[i].master_fd, buf, len);
-                    if (written < 0)
-                        g_debug ("Unable to write to client[%d]", i);
+					if (written < 0)
+						g_debug ("Unable to write to client[%d]", i);
 					/* then check for a complete command */
 					modem_parse_client (manager, i, buf, len);
 				}
@@ -666,7 +666,7 @@ void cleanup_func (MBMManager * manager)
 
 	remove_supl_setup (manager);
 	modem_disable_unsolicited_responses (manager);
-    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
+	priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 	modem_disable_gps (manager);
 	tcflush (priv->nmea_fd, TCIOFLUSH);
 	tcflush (priv->ctrl_fd, TCIOFLUSH);
@@ -722,7 +722,7 @@ void _mbm_manager_init (MBMManager * manager)
 
 	priv->wait_for_sleep = 0;
 	priv->unsolicited_responses_enabled = 0;
-    priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
+	priv->registration_status = MBM_REGISTRATION_STATUS_NOT_REGISTERED;
 
 	priv->supl_setup_done = 0;
 	priv->supl_account_idx = -1;

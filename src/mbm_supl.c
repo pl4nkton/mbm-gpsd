@@ -114,7 +114,7 @@ static gboolean supl_setup_clock (MBMManager *manager)
 		if (mbm_options_debug ())
 			g_debug ("Clock setup: %s\n", date);
 		return TRUE;
-	} 
+	}
 
 	if (mbm_options_debug ())
 		g_debug ("Unable to setup clock.\n");
@@ -138,7 +138,7 @@ static gboolean supl_create_account (MBMManager *manager)
 			g_debug ("The account id for SUPL is %d.\n",
 					 priv->supl_account_idx);
 		return TRUE;
-	} 
+	}
 
 	if (mbm_options_debug ())
 		g_debug ("Unable to setup supl account.\n");
@@ -411,5 +411,4 @@ int supl_install_certificate (MBMManager * manager, char *file_path)
 		g_debug ("Installation of supl certificate successful.\n");
 
 	return 1;
-
 }

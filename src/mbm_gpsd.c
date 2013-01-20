@@ -110,7 +110,7 @@ static gboolean dbus_init (GMainLoop * loop)
 
 	return TRUE;
 
-  err:dbus_g_connection_unref (connection);
+	err:dbus_g_connection_unref (connection);
 	g_object_unref (proxy);
 
 	return FALSE;
@@ -120,18 +120,18 @@ static MBMManager *g_manager;
 
 void sig_quit (int sig)
 {
-    MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (g_manager);
-    if (!priv->system_terminating) {
-        if (mbm_options_debug ())
-            g_debug ("Shutting down.");
-        priv->system_terminating = 1;
-        save_settings ();
-        mbm_manager_quit (g_manager);
-        g_main_loop_quit (g_loop);
-    } else {
-        if (mbm_options_debug ())
-            g_debug ("The system is already shutting down. Please wait.");
-    }
+	MBMManagerPrivate *priv = MBM_MANAGER_GET_PRIVATE (g_manager);
+	if (!priv->system_terminating) {
+		if (mbm_options_debug ())
+			g_debug ("Shutting down.");
+		priv->system_terminating = 1;
+		save_settings ();
+		mbm_manager_quit (g_manager);
+		g_main_loop_quit (g_loop);
+	} else {
+		if (mbm_options_debug ())
+			g_debug ("The system is already shutting down. Please wait.");
+	}
 }
 
 static void nolog(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
@@ -148,11 +148,11 @@ int main (int argc, char *argv[])
 	sigemptyset (&sig_action.sa_mask);
 	sigaddset (&sig_action.sa_mask, SIGINT);
 	sigaddset (&sig_action.sa_mask, SIGTERM);
-    sigaddset (&sig_action.sa_mask, SIGHUP);
+	sigaddset (&sig_action.sa_mask, SIGHUP);
 	sig_action.sa_flags = 0;
 	sigaction (SIGINT, &sig_action, &old_action);
 	sigaction (SIGTERM, &sig_action, NULL);
-    sigaction (SIGHUP, &sig_action, NULL);
+	sigaction (SIGHUP, &sig_action, NULL);
 
 	mbm_options_parse (argc, argv);
 	g_type_init ();
@@ -169,7 +169,7 @@ int main (int argc, char *argv[])
 		if (sid < 0) exit(EXIT_FAILURE);
 		if ((chdir("/")) < 0) exit(EXIT_FAILURE);
 
-        g_log_set_default_handler(nolog, NULL);
+		g_log_set_default_handler(nolog, NULL);
 		close(STDOUT_FILENO);
 		close(STDERR_FILENO);
 	}
@@ -184,7 +184,7 @@ int main (int argc, char *argv[])
 
 	dbus_g_thread_init ();
 #else
-        dbus_threads_init_default ();
+		dbus_threads_init_default ();
 #endif
 
 	g_debug ("Started version: %s", VERSION);
