@@ -750,7 +750,7 @@ static void mbm_manager_init (MBMManager * manager)
 {
 	_mbm_manager_init (manager);
 
-	g_thread_create ((GThreadFunc) main_loop, manager, TRUE, NULL);
+	g_thread_new ("mbm_manager", (GThreadFunc) main_loop, manager);
 }
 
 void _finalize (MBMManagerPrivate * priv)
