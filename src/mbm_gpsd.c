@@ -155,7 +155,7 @@ int main (int argc, char *argv[])
 	sigaction (SIGHUP, &sig_action, NULL);
 
 	mbm_options_parse (argc, argv);
-	g_type_init ();
+
 
 	if (!mbm_foreground()) {
 		pid_t pid, sid;
